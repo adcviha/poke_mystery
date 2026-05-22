@@ -1,10 +1,10 @@
 #!/bin/bash
-# PokéMystery build script — concatenates source into single HTML output.
+# Poké_Mystery build script — concatenates source into single HTML output.
 # Usage: ./build.sh
-# Output: pokemystery.html (overwritten)
+# Output: poke_mystery.html (overwritten)
 set -e
 
-OUTPUT="pokemystery.html"
+OUTPUT="poke_mystery.html"
 SRC="src"
 
 {

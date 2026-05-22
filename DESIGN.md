@@ -1,4 +1,4 @@
-# PokéMystery — Design Document
+# Poké_Mystery — Design Document
 
 > **Companion documents:** [SPEC.md](SPEC.md) defines the technical contract
 > (axis formulas, data model, algorithms). [CLAUDE.md](CLAUDE.md) holds working
@@ -206,7 +206,7 @@ Every question in the pool must pass these rules:
 - Git init, initial commit
 
 ### Phase 2 — Precompute + Questions
-- `scripts/precompute.js`: fetch full PokéAPI, compute 5D coords, output JSON
+- `scripts/precompute.py`: fetch full PokéAPI, compute 5D coords, output JSON
 - Spot-check the cloud, tune axis formulas
 - `src/questions.js`: 60-question pool with axis weightings
 

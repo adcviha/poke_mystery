@@ -1,4 +1,4 @@
-# PokéMystery — Specification
+# Poké_Mystery — Specification
 
 This document is the technical source of truth. It defines *how* the system
 works at the code level. For *what* we're building and *why*, see DESIGN.md.
@@ -109,7 +109,7 @@ Final aura is clamped to [-5, +5].
 
 ### Input
 
-The script `scripts/precompute.js` fetches from PokéAPI:
+The script `scripts/precompute.py` fetches from PokéAPI:
 - `https://pokeapi.co/api/v2/pokemon-species/?limit=0` — get total count
 - `https://pokeapi.co/api/v2/pokemon-species/{id}/` — for each species
 - `https://pokeapi.co/api/v2/pokemon/{id}/` — for each Pokémon (stats, types, sprites)
@@ -249,7 +249,7 @@ It does not pre-roll or show odds. The magic is in not knowing until you choose.
 
 ## State Management
 
-All runtime state lives in `PokeMystery.state`:
+All runtime state lives in `Poke_Mystery.state`:
 
 ```js
 state = {

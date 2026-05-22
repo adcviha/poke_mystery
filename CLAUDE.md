@@ -4,7 +4,7 @@ Working notes for any Claude session picking up this project.
 
 ## TL;DR
 
-**PokéMystery** is a single-file HTML personality quiz hosted on GitHub Pages. Users answer 15 questions sampled from a pool of 60. Each answer quietly nudges a hidden 5-axis vector. At the end, the engine finds the 3 nearest Pokémon in a pre-computed coordinate cloud (built from the full PokéAPI) and reveals them via Professor Birch's briefcase. A 1-in-50 shiny roll fires on starter selection.
+**Poké_Mystery** is a single-file HTML personality quiz hosted on GitHub Pages. Users answer 15 questions sampled from a pool of 60. Each answer quietly nudges a hidden 5-axis vector. At the end, the engine finds the 3 nearest Pokémon in a pre-computed coordinate cloud (built from the full PokéAPI) and reveals them via Professor Birch's briefcase. A 1-in-50 shiny roll fires on starter selection.
 
 Tagline: *"Take a quiz to reveal a Pokémon mystery."*
 
@@ -14,9 +14,9 @@ Tagline: *"Take a quiz to reveal a Pokémon mystery."*
 
 Don't break these without checking first:
 
-- **One HTML file as the output.** The source is modular (see File Layout), but the deployable artifact is a single `pokemystery.html`. A trivial shell script concatenates source files. No bundler, no `node_modules`.
-- **Vanilla JS.** No React, Vue, or any framework. All JS attaches to a shared `window.PokeMystery` namespace.
-- **No live API calls at runtime.** All Pokémon data is pre-computed into `src/data/pokemon_coords.json` by the `scripts/precompute.js` Node script. The quiz runs entirely from static data.
+- **One HTML file as the output.** The source is modular (see File Layout), but the deployable artifact is a single `poke_mystery.html`. A trivial shell script concatenates source files. No bundler, no `node_modules`.
+- **Vanilla JS.** No React, Vue, or any framework. All JS attaches to a shared `window.Poke_Mystery` namespace.
+- **No live API calls at runtime.** All Pokémon data is pre-computed into `src/data/pokemon_coords.json` by the `scripts/precompute.py` script. The quiz runs entirely from static data.
 - **Pokémon artwork only.** Use `other/official-artwork/front_default` URLs (and their shiny variants). No sprites, no home renders. These URLs are precomputed into the JSON.
 - **GitHub Pages deployment.** Push to master → auto-deploys.
 - **60-question pool / 15 sampled.** Questions follow the Anti-Friction Rules (no social masks, no caricatures, no obvious correct answers, obfuscate what's being tested).
@@ -36,19 +36,19 @@ See SPEC.md for exact formulas. This is the quick mental model:
 
 ## Code conventions
 
-- All state lives in `PokeMystery.state` (one object). Sub-objects group related properties.
+- All state lives in `Poke_Mystery.state` (one object). Sub-objects group related properties.
 - Functions are short and named for what they do. Banner comments (`// =====`) separate major sections within files.
 - `const` declarations before any code that uses them.
-- Internals exposed via `window.POKEMYSTERY` for console hacking.
-- Each source file is one IIFE attaching to `window.PokeMystery`.
+- Internals exposed via `window.POKE_MYSTERY` for console hacking.
+- Each source file is one IIFE attaching to `window.Poke_Mystery`.
 
 ## File layout
 
 ```
-pokemystery/
-├── pokemystery.html            # BUILT OUTPUT — single-file deployable
-├── index.html                  # GitHub Pages redirect → pokemystery.html
-├── build.sh                    # Concatenates src/ into pokemystery.html
+poke_mystery/
+├── poke_mystery.html            # BUILT OUTPUT — single-file deployable
+├── index.html                  # GitHub Pages redirect → poke_mystery.html
+├── build.sh                    # Concatenates src/ into poke_mystery.html
 │
 ├── src/
 │   ├── index.html              # Dev shell: style + script tags in dependency order
@@ -64,7 +64,7 @@ pokemystery/
 │   └── main.js                 # Init, event binding, orchestration
 │
 ├── scripts/
-│   └── precompute.js           # Node: fetch PokéAPI → compute coords → JSON
+│   └── precompute.py           # Python: fetch PokéAPI → compute coords → JSON
 │
 ├── CLAUDE.md                   # This file
 ├── DESIGN.md                   # Vision, aesthetic targets, UX flow, roadmap
@@ -77,11 +77,11 @@ pokemystery/
 
 **Dev:** Open `src/index.html` in a modern browser. No server needed.
 
-**Precompute:** `node scripts/precompute.js` — hits PokéAPI (~2000 requests, takes 10-15 min with throttling). Outputs `src/data/pokemon_coords.json`. Run this once; commit the JSON.
+**Precompute:** `python3 scripts/precompute.py` — hits PokéAPI (~2000 requests, takes 10-15 min with throttling). Outputs `src/data/pokemon_coords.json`. Run this once; commit the JSON.
 
-**Deploy:** Run `./build.sh` to produce `pokemystery.html`. Commit and push to master — auto-deploys to GitHub Pages.
+**Deploy:** Run `./build.sh` to produce `poke_mystery.html`. Commit and push to master — auto-deploys to GitHub Pages.
 
-Live at: `https://adcviha.github.io/pokemystery/`
+Live at: `https://adcviha.github.io/poke_mystery/`
 
 ## Working protocol (every task, every time)
 
