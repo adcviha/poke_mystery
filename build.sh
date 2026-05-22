@@ -1,0 +1,43 @@
+#!/bin/bash
+# PokéMystery build script — concatenates source into single HTML output.
+# Usage: ./build.sh
+# Output: pokemystery.html (overwritten)
+set -e
+
+OUTPUT="pokemystery.html"
+SRC="src"
+
+{
+  # Header up to </head>, strip the stylesheet link (we inline CSS)
+  sed -n '1,/<\/head>/p' "$SRC/index.html" | sed '$d' | grep -v 'link rel="stylesheet"'
+
+  # Inline CSS
+  echo '  <style>'
+  cat "$SRC/style.css"
+  echo '  </style>'
+  echo '</head>'
+
+  # Body between </head> and first <script> tag
+  sed -n '/<\/head>/,/<script/p' "$SRC/index.html" \
+    | sed '1d;$d'
+
+  # Inline all JS in dependency order
+  echo '<script>'
+  for js in \
+    questions.js \
+    engine.js \
+    environment.js \
+    ui.js \
+    main.js
+  do
+    echo "// ===== $js ====="
+    cat "$SRC/$js"
+    echo ''
+  done
+  echo '</script>'
+
+  echo '</body>'
+  echo '</html>'
+} > "$OUTPUT"
+
+echo "Built $OUTPUT ($(wc -c < "$OUTPUT") bytes)"
