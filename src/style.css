@@ -1,0 +1,331 @@
+/* ===== Poké_Mystery Styles =====
+   Mystery Dungeon melancholia — quiet, earnest, soft.
+   System serif for questions, system sans-serif for UI.
+   Generous whitespace. No harsh colors. */
+
+/* --- Reset & base --- */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  color: #3a3a3a;
+  background: linear-gradient(135deg, #d4e6d4 0%, #dce8f0 50%, #e8dce8 100%);
+  transition: background 4s ease;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+#app {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Screens --- */
+
+.screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Intro --- */
+
+.intro-screen {
+  text-align: center;
+  gap: 2.5rem;
+}
+
+.intro-tagline {
+  font-size: 1.35rem;
+  line-height: 1.7;
+  color: #4a4a4a;
+  max-width: 400px;
+}
+
+/* --- Buttons --- */
+
+.btn-start, .btn-retry {
+  display: inline-block;
+  padding: 0.8rem 2.2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  color: #5a5a5a;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid #c0c0c0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+}
+
+.btn-start:hover, .btn-retry:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-1px);
+}
+
+.btn-start:active, .btn-retry:active {
+  transform: translateY(0);
+}
+
+/* --- Question --- */
+
+.question-progress {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  color: #444;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.option-btn {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  text-align: left;
+  color: #4a4a4a;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid #d5d5d5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.option-btn:hover {
+  background: rgba(255,255,255,0.85);
+  border-color: #b0b0b0;
+  transform: translateX(3px);
+}
+
+.option-btn:active {
+  transform: translateX(0);
+}
+
+/* Selected state flash */
+.option-btn.selected {
+  background: rgba(200, 220, 240, 0.8);
+  border-color: #90b0d0;
+}
+
+/* --- Briefcase --- */
+
+.briefcase-screen {
+  text-align: center;
+}
+
+.briefcase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  opacity: 0;
+  animation: fadeInBriefcase 1.2s ease forwards;
+}
+
+@keyframes fadeInBriefcase {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.briefcase-inner {
+  width: 160px;
+  height: 110px;
+  background: linear-gradient(180deg, #c4a46c 0%, #a08050 60%, #8b6d3f 100%);
+  border-radius: 8px 8px 12px 12px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* Briefcase clasp */
+.briefcase-inner::before {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 18px;
+  background: #c9a84c;
+  border-radius: 3px;
+  border: 2px solid #8b6d3f;
+  transition: transform 0.6s ease;
+}
+
+.briefcase.open .briefcase-inner::before {
+  transform: translate(-50%, -120%);
+}
+
+.briefcase-label {
+  font-size: 0.9rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* --- Trio --- */
+
+.trio-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  animation: fadeIn 0.8s ease;
+}
+
+.trio-title {
+  font-size: 0.9rem;
+  color: #777;
+  font-style: italic;
+}
+
+.trio-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #d5d5d5;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 170px;
+}
+
+.pokemon-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.85);
+}
+
+.card-artwork {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.card-genus {
+  font-size: 0.7rem;
+  color: #999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* --- Shiny reveal --- */
+
+.shiny-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.6s ease;
+}
+
+.shiny-reveal.is-shiny {
+  position: relative;
+}
+
+.shiny-flash {
+  position: absolute;
+  inset: -20px;
+  border-radius: 20px;
+  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+  animation: shinyPulse 1.5s ease-out;
+  pointer-events: none;
+}
+
+@keyframes shinyPulse {
+  0%   { opacity: 1; transform: scale(0.8); }
+  50%  { opacity: 0.6; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.shiny-artwork {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+.shiny-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.shiny-genus {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+}
+
+.shiny-text {
+  font-size: 1rem;
+  color: #b8860b;
+  font-weight: bold;
+  animation: fadeIn 1s ease;
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 500px) {
+  html { font-size: 16px; }
+  body { padding: 1rem; }
+  .question-text { font-size: 1.05rem; }
+  .trio-cards { flex-direction: column; align-items: center; }
+  .pokemon-card { width: 100%; max-width: 240px; }
+  .card-artwork { width: 100px; height: 100px; }
+}

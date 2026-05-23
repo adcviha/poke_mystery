@@ -21,8 +21,20 @@ SRC="src"
   sed -n '/<\/head>/,/<script/p' "$SRC/index.html" \
     | sed '1d;$d'
 
+  # Inline data
+  echo '<script>'
+  echo '// PokéAPI precomputed data'
+  python3 -c "
+import json
+with open('$SRC/data/pokemon_coords.json') as f:
+    data = json.load(f)
+print('window.POKE_MYSTERY_DATA = ' + json.dumps(data) + ';')
+"
+  echo '</script>'
+
   # Inline all JS in dependency order
   echo '<script>'
+  echo 'window.Poke_Mystery = {};'
   for js in \
     questions.js \
     engine.js \

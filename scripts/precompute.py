@@ -34,7 +34,14 @@ def fetch_json(url, retries=3):
             req = urllib.request.Request(url, headers={"User-Agent": "PokeMystery/0.1"})
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return json.loads(resp.read().decode())
-        except (urllib.error.HTTPError, urllib.error.URLError, OSError) as e:
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None  # 404s are permanent, don't retry
+            if attempt == retries - 1:
+                print(f"  FAILED: {url} — {e}")
+                return None
+            time.sleep(2 ** attempt)
+        except (urllib.error.URLError, OSError) as e:
             if attempt == retries - 1:
                 print(f"  FAILED: {url} — {e}")
                 return None
@@ -45,8 +52,8 @@ def fetch_json(url, retries=3):
 # ===== Egg group → Nature score =====
 
 EGG_GROUP_SCORES = {
-    "monster":       -3,
-    "dragon":        -2,
+    "monster":       -2,
+    "dragon":        -1,
     "water1":        -2,
     "ground":        -2,
     "bug":           -1,
@@ -70,7 +77,7 @@ TYPE_SCORES = {
     "fighting":  -3,
     "ground":    -2,
     "bug":       -2,
-    "normal":    -2,
+    "normal":     0,  # truly neutral — was -2, caused Snorlax to be max Wild
     "rock":      -2,
     "dragon":    -1,
     "flying":    -1,
@@ -152,9 +159,9 @@ GROWTH_TEMPO = {
 
 # ===== Genera keyword → Aura modifier =====
 
-GENERA_CAPRICIOUS = ["shadow", "ghost"]
-GENERA_CAPRICIOUS_LIGHT = ["dark", "tiny", "small"]
-GENERA_EARNEST = ["flame", "guardian", "sky high", "dragon", "legendary", "sword", "shield"]
+GENERA_CAPRICIOUS = ["shadow", "ghost", "sleeping", "drowsy", "lazy", "dopey", "imitation", "mime"]
+GENERA_CAPRICIOUS_LIGHT = ["dark", "tiny", "small", "psi", "scuffle", "trumpet", "balloon", "dummy", "fake"]
+GENERA_EARNEST = ["flame", "guardian", "sky high", "dragon", "legendary", "sword", "shield", "aura"]
 
 
 def aura_from_genera(genus_en):
@@ -172,6 +179,108 @@ def aura_from_genera(genus_en):
         if k in lower:
             return -1.0
     return 0.0
+
+
+# ===== Flavor text keyword → Aura modifier =====
+
+AURA_FLAVOR_CAPRICIOUS = [
+    "laugh", "joke", "prank", "trick", "mischief", "whimsy", "whimsical",
+    "dance", "playful", "carefree", "easy-going", "easygoing", "relaxed",
+    "lazy", "slothful", "pretend", "disguise", "mimic", "mimicking",
+    "confuse", "baffle", "weird", "strange", "odd", "bizarre", "curious",
+    "clumsy", "stumble", "totter", "dizzy", "goofy", "silly", "merry",
+    "cheerful", "jolly", "impish", "naughty", "pesky", "rascal",
+    "grin", "smirk", "giggle", "cackle", "snicker",
+]
+
+AURA_FLAVOR_EARNEST = [
+    "protect", "guard", "guardian", "duty", "honor", "noble",
+    "serious", "solemn", "dignified", "wise", "ancient prophecy",
+    "aura", "meditate", "discipline", "warrior", "oath", "vigil",
+    "sentinel", "legendary hero", "sacred", "righteous", "stoic",
+    "unyielding", "unwavering", "resolute", "command", "judge",
+    "justice", "order", "balance the world",
+]
+
+
+def aura_from_flavor_text(flavor_texts):
+    """Score concatenated English flavor texts for Aura via keyword density."""
+    if not flavor_texts:
+        return 0.0
+    combined = " ".join(flavor_texts).lower()
+    cap = sum(1 for k in AURA_FLAVOR_CAPRICIOUS if k in combined)
+    earn = sum(1 for k in AURA_FLAVOR_EARNEST if k in combined)
+    # Each match is worth ~0.35, capped so flavor text doesn't overwhelm
+    raw = (cap - earn) * 0.35
+    return clamp(raw, -2.5, 2.5)
+
+
+# ===== Egg group → Tether modifier =====
+
+TETHER_EGG_GROUP_SCORES = {
+    "fairy":         -1.5,  # nurturing, communal
+    "plant":         -1.0,  # ecosystem, interconnected
+    "amorphous":     +1.5,  # solitary, formless
+    "mineral":       +1.5,  # asocial, constructed
+    "indeterminate": +1.0,  # weird solitary entities
+}
+
+
+# ===== Genera keyword → Tether modifier =====
+
+TETHER_GENERA_KITH = [
+    "family", "jubilee", "happiness", "blessing", "caring", "parent",
+    "nurturing", "nurse", "cheer", "hug", "cuddle", "bond", "trust",
+    "helper", "peace", "kindness", "love", "angel", "care",
+]
+
+TETHER_GENERA_KINLESS = [
+    "lonely", "solitary", "silent", "hermit", "outcast", "banished",
+    "exile", "recluse",
+]
+
+# ===== Flavor text keyword → Tether modifier =====
+
+TETHER_FLAVOR_KITH = [
+    "family", "together", "group", "blessing", "kindness", "peace",
+    "share", "care", "nurse", "joy", "parent", "child", "baby",
+    "herd", "pack", "colony", "couple", "pair", "community",
+    "friend", "gentle", "protect", "nurturing", "bond", "companion",
+    "team", "partner", "flock", "together with", "gathering",
+    "kindhearted", "caring", "help", "rescue",
+]
+
+TETHER_FLAVOR_KINLESS = [
+    "alone", "solitary", "loner", "isolated", "banish", "exile",
+    "nightmare", "silent", "darkness", "abandoned", "wander",
+    "desolate", "hermit", "outcast", "recluse", "shun",
+    "silence", "solitude", "lurking", "void",
+]
+
+
+def tether_from_genera(genus_en):
+    """Score the English genus string for Tether (Kith/Kinless)."""
+    if not genus_en:
+        return 0.0
+    lower = genus_en.lower()
+    for k in TETHER_GENERA_KITH:
+        if k in lower:
+            return -1.5  # Kith
+    for k in TETHER_GENERA_KINLESS:
+        if k in lower:
+            return 1.5  # Kinless
+    return 0.0
+
+
+def tether_from_flavor_text(flavor_texts):
+    """Score concatenated English flavor texts for Tether via keyword density."""
+    if not flavor_texts:
+        return 0.0
+    combined = " ".join(flavor_texts).lower()
+    kith = sum(1 for k in TETHER_FLAVOR_KITH if k in combined)
+    kinless = sum(1 for k in TETHER_FLAVOR_KINLESS if k in combined)
+    raw = (kinless - kith) * 0.4
+    return clamp(raw, -2.0, 2.0)
 
 
 # ===== Generation → Aura modifier =====
@@ -197,11 +306,19 @@ def clamp(val, lo=-5.0, hi=5.0):
 
 # ===== Main compute for one Pokémon =====
 
-def compute_coords(species_data, pokemon_data):
+def compute_coords(species_data, pokemon_data, flavor_texts=None):
     """
-    Given species JSON and pokemon JSON, compute [reach, tempo, nature, tether, aura].
+    Given species JSON, pokemon JSON, and optional English flavor text list,
+    compute [reach, tempo, nature, tether, aura].
     Returns None if essential data is missing.
     """
+    if flavor_texts is None:
+        flavor_texts = []
+
+    # Shared: genus string used by both Tether and Aura
+    genera_entries = species_data.get("genera", [])
+    genus_en = next((g["genus"] for g in genera_entries if g["language"]["name"] == "en"), None)
+
     # ---- REACH ----
     is_legendary = species_data.get("is_legendary", False)
     is_mythical = species_data.get("is_mythical", False)
@@ -211,6 +328,10 @@ def compute_coords(species_data, pokemon_data):
 
     reach_legendary = (3.0 if is_legendary else 0.0) + (2.0 if is_mythical else 0.0)
     reach_capture = (1.0 - (capture_rate / 255.0)) * 4.0
+    # Non-legendaries shouldn't ride capture_rate to Cosmic — Snorlax isn't Arceus.
+    # Reduce capture_rate weight by 75% for common Pokémon.
+    if not is_legendary and not is_mythical:
+        reach_capture *= 0.25
     # size: log of height*weight, rough normalization
     hw = height * weight
     reach_size = math.log(hw + 1) / math.log(500000) * 4.0 - 2.0  # roughly [-2, +2]
@@ -226,13 +347,18 @@ def compute_coords(species_data, pokemon_data):
     spd = stats.get("special-defense", 50)
     denom = (hp + defense + spd) or 1
     ratio = (atk + spa + spe) / denom
-    # ratio typically ranges ~0.2 (Shuckle) to ~3.5 (Ninjask)
-    # Map [0.15, 4.0] → [+4, -4]
-    tempo_stats = (1.0 - ((ratio - 0.15) / (4.0 - 0.15))) * 8.0 - 4.0
+    # Piecewise linear: ratio 0.15 → +4 Stoic, ratio 1.0 → 0 neutral, ratio 3.5 → -4 Mercurial
+    if ratio <= 1.0:
+        tempo_stats = 4.0 - (ratio - 0.15) / (1.0 - 0.15) * 4.0
+    else:
+        tempo_stats = -(ratio - 1.0) / (3.5 - 1.0) * 4.0
+    tempo_stats = clamp(tempo_stats, -4, 4)
+    # Speed bonus: raw speed independent of ratio — fast mons feel Mercurial even without offense
+    tempo_speed = (1.0 - (spe / 100.0)) * 1.5  # high speed → -Mercurial, low speed → +Stoic
     tempo_stats = clamp(tempo_stats, -4, 4)
     growth_name = species_data.get("growth_rate", {}).get("name", "medium")
     tempo_growth = GROWTH_TEMPO.get(growth_name, 0.0)
-    tempo = clamp(tempo_stats + tempo_growth)
+    tempo = clamp(tempo_stats + tempo_speed + tempo_growth)
 
     # ---- NATURE ----
     egg_groups = [eg["name"] for eg in species_data.get("egg_groups", [])]
@@ -255,20 +381,27 @@ def compute_coords(species_data, pokemon_data):
     habitat_name = species_data.get("habitat", {}) or {}
     habitat_name = habitat_name.get("name") if habitat_name else None
     tether_habitat = HABITAT_SCORES.get(habitat_name, 0.0)
-    tether = clamp(tether_happiness + tether_gender + tether_habitat)
+    # Egg groups: Fairy/Plant → Kith, Amorphous/Mineral → Kinless
+    if egg_groups:
+        tether_eggs = sum(TETHER_EGG_GROUP_SCORES.get(eg, 0) for eg in egg_groups) / len(egg_groups)
+    else:
+        tether_eggs = 0.0
+    # Genera + flavor text keyword signals
+    tether_genera = tether_from_genera(genus_en)
+    tether_flavor = tether_from_flavor_text(flavor_texts)
+    tether = clamp(tether_happiness + tether_gender + tether_habitat + tether_eggs + tether_genera + tether_flavor)
 
     # ---- AURA ----
     color_name = species_data.get("color", {}).get("name", "gray")
     aura_color = COLOR_SCORES.get(color_name, 0.0)
-    genera_entries = species_data.get("genera", [])
-    genus_en = next((g["genus"] for g in genera_entries if g["language"]["name"] == "en"), None)
     aura_genera = aura_from_genera(genus_en)
+    aura_flavor = aura_from_flavor_text(flavor_texts)
     shape_name = species_data.get("shape", {}) or {}
     shape_name = shape_name.get("name") if shape_name else None
-    aura_shape = SHAPE_SCORES.get(shape_name, 0.0)
+    aura_shape = SHAPE_SCORES.get(shape_name, 0.0) * 0.5  # halved — shape shouldn't dominate
     gen_name = species_data.get("generation", {}).get("name", "")
     aura_gen = GEN_AURA.get(gen_name, 0.0)
-    aura = clamp(aura_color + aura_genera + aura_shape + aura_gen)
+    aura = clamp(aura_color + aura_genera + aura_flavor + aura_shape + aura_gen)
 
     return [round(reach, 4), round(tempo, 4), round(nature, 4), round(tether, 4), round(aura, 4)]
 
@@ -288,19 +421,18 @@ def extract_artwork(pokemon_data):
 # ===== Main =====
 
 def main():
-    print("=== PokéMystery Precompute ===\n")
+    print("=== Poke_Mystery Precompute ===\n")
 
-    # Get total species count
+    # Get total species count and full species list
     print("Fetching species count...")
     species_list_url = f"{API_BASE}/pokemon-species/?limit=1"
     first_page = fetch_json(species_list_url)
     if not first_page:
-        print("ERROR: Cannot reach PokéAPI. Check your internet connection.")
+        print("ERROR: Cannot reach PokeAPI. Check your internet connection.")
         sys.exit(1)
     total_species = first_page["count"]
     print(f"Total species in API: {total_species}")
 
-    # Fetch the full species list to get IDs
     print("Fetching full species list...")
     all_species_url = f"{API_BASE}/pokemon-species/?limit={total_species}"
     all_species_data = fetch_json(all_species_url)
@@ -308,13 +440,10 @@ def main():
         print("ERROR: Cannot fetch species list.")
         sys.exit(1)
 
-    results = all_species_data["results"]
-    print(f"Species entries: {len(results)}")
+    species_results = all_species_data["results"]
+    print(f"Species entries: {len(species_results)}")
 
-    # Build list of (id, name) to process
-    # Only process IDs that exist in the pokemon endpoint (some species are forms)
-    pokemon_entries = []
-    # First, get the actual pokemon endpoint list to know valid IDs
+    # Build a set of valid pokemon IDs for quick lookup
     print("Fetching pokemon list...")
     pokemon_list_url = f"{API_BASE}/pokemon/?limit=100000"
     pokemon_list_data = fetch_json(pokemon_list_url)
@@ -323,56 +452,64 @@ def main():
         for entry in pokemon_list_data["results"]:
             pid = int(entry["url"].rstrip("/").split("/")[-1])
             pokemon_ids.add(pid)
-    print(f"Valid pokemon IDs: {len(pokemon_ids)} (max: {max(pokemon_ids) if pokemon_ids else 0})")
+    print(f"Valid pokemon IDs: {len(pokemon_ids)}")
 
-    # Process each species result
-    # We'll go by pokemon ID ranges, trying each ID and checking if it exists
-    max_id = max(pokemon_ids) if pokemon_ids else 1025
-    print(f"\nProcessing Pokémon 1–{max_id}...\n")
+    # Process each species from the species list (not by scanning pokemon IDs)
+    # This avoids hitting form IDs (10001+) that don't have species endpoints.
+    print(f"\nProcessing {len(species_results)} species...\n")
 
     pokemon_data_list = []
     errors = []
-    skipped_forms = 0
 
-    for pid in range(1, max_id + 1):
-        # Check if this ID exists in the pokemon endpoint
-        if pid not in pokemon_ids:
-            continue
+    for i, species_entry in enumerate(species_results):
+        species_url = species_entry["url"]
+        species_id = int(species_url.rstrip("/").split("/")[-1])
 
         # Fetch species data
-        species_url = f"{API_BASE}/pokemon-species/{pid}/"
         species_data = fetch_json(species_url)
         if not species_data:
-            errors.append(f"species {pid}")
+            errors.append(f"species {species_id}")
+            time.sleep(DELAY)
             continue
 
-        # Check if this is a non-default variety (skip Megas, regionals, etc.)
-        # The species endpoint has a varieties array; we only process when this
-        # species IS the default variety's species
+        # Get the default variety's pokemon ID
         varieties = species_data.get("varieties", [])
-        is_default_species = False
+        default_pid = None
         for v in varieties:
             if v.get("is_default", False):
-                var_pokemon_name = v["pokemon"]["name"]
-                var_pokemon_url = v["pokemon"]["url"]
-                var_pid = int(var_pokemon_url.rstrip("/").split("/")[-1])
-                if var_pid == pid:
-                    is_default_species = True
+                var_url = v["pokemon"]["url"]
+                default_pid = int(var_url.rstrip("/").split("/")[-1])
                 break
 
-        if not is_default_species:
-            skipped_forms += 1
+        if default_pid is None:
+            errors.append(f"no-default {species_id}")
+            time.sleep(DELAY)
+            continue
+
+        # Skip if default variety's pokemon ID doesn't match species ID
+        # (this species entry is a form pointing to a different base)
+        if default_pid != species_id:
+            # This species belongs to a form that shares the same species
+            # Only process when species_id == default_pid (the base form)
+            time.sleep(DELAY)
             continue
 
         # Fetch pokemon data (stats, types, sprites)
-        pokemon_url = f"{API_BASE}/pokemon/{pid}/"
+        pokemon_url = f"{API_BASE}/pokemon/{default_pid}/"
         pokemon_data = fetch_json(pokemon_url)
         if not pokemon_data:
-            errors.append(f"pokemon {pid}")
+            errors.append(f"pokemon {default_pid}")
+            time.sleep(DELAY)
             continue
 
-        # Compute coordinates
-        coords = compute_coords(species_data, pokemon_data)
+        # Compute coordinates (extract flavor texts for keyword matching)
+        flavor_entries = species_data.get("flavor_text_entries", [])
+        flavor_texts = list(dict.fromkeys(
+            f["flavor_text"].replace("\n", " ").replace("\x0c", " ")
+            for f in flavor_entries
+            if f["language"]["name"] == "en"
+        ))
+        coords = compute_coords(species_data, pokemon_data, flavor_texts)
 
         # Extract artwork
         artwork = extract_artwork(pokemon_data)
@@ -382,7 +519,7 @@ def main():
         genus_en = next((g["genus"] for g in genera if g["language"]["name"] == "en"), "")
 
         entry = {
-            "id": pid,
+            "id": default_pid,
             "name": species_data["name"],
             "genus": genus_en,
             "coords": coords,
@@ -396,8 +533,9 @@ def main():
         pokemon_data_list.append(entry)
 
         # Progress
-        if pid % BATCH_SIZE == 0:
-            print(f"  {pid}/{max_id} — {len(pokemon_data_list)} processed, {len(errors)} errors, {skipped_forms} forms skipped")
+        count = len(pokemon_data_list)
+        if count % BATCH_SIZE == 0:
+            print(f"  {count}/{len(species_results)} processed, {len(errors)} errors")
 
         # Be polite
         time.sleep(DELAY)
@@ -405,7 +543,6 @@ def main():
     print(f"\nDone. {len(pokemon_data_list)} Pokémon processed.")
     if errors:
         print(f"Errors: {len(errors)} — first 10: {errors[:10]}")
-    print(f"Forms skipped: {skipped_forms}")
 
     # ===== Normalization pass: min-max scale coords to [-5, +5] =====
     print("\nNormalizing coordinates...")
