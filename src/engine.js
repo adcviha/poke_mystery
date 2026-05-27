@@ -254,6 +254,11 @@ Poke_Mystery.engine = (function() {
   // Third-person narrator describing how each Pokémon appears.
   // Gated by the Pokémon's strongest axis coordinate.
 
+  // Shape groups for phrase gating
+  var NOT_FLYING = ["armor","ball","blob","fish","heads","humanoid","legs","quadruped","squiggle","tentacles","upright"];
+  var NO_LEGS = ["ball","blob","fish","squiggle","tentacles","wings","bug-wings"];
+  var NO_UPRIGHT = ["ball","blob","fish","squiggle","tentacles","quadruped","armor"];
+
   var PHRASES = {
     0: [ // closest match
       { axis: "reach", dir: 1, min: 2, text: "Arrived as if it already knew the way." },
@@ -263,8 +268,8 @@ Poke_Mystery.engine = (function() {
       { axis: "tempo", dir: 1, min: 2, text: "Took its time. Arrived exactly when it meant to." },
       { axis: "tempo", dir: 1, min: 2, text: "Slow, certain. No need to rush." },
       { axis: "tempo", dir: -1, min: 2, text: "Arrived before the question finished." },
-      { axis: "tempo", dir: -1, min: 2, text: "Quick. Like it was already running." },
-      { axis: "nature", dir: 1, min: 2, text: "Stepped out of something precise. A mechanism, maybe." },
+      { axis: "tempo", dir: -1, min: 2, text: "Quick. Like it was already running.", exclude_shapes: NO_LEGS },
+      { axis: "nature", dir: 1, min: 2, text: "Stepped out of something precise. A mechanism, maybe.", exclude_shapes: NO_LEGS },
       { axis: "nature", dir: 1, min: 2, text: "Calculated. But not cold. Just exact." },
       { axis: "nature", dir: -1, min: 2, text: "Came through the undergrowth. Quiet as moss." },
       { axis: "nature", dir: -1, min: 2, text: "Wild and unbothered. Like weather." },
@@ -273,23 +278,23 @@ Poke_Mystery.engine = (function() {
       { axis: "tether", dir: -1, min: 2, text: "Brought company. Even alone, it brought company." },
       { axis: "tether", dir: -1, min: 2, text: "Reached out before it was fully here." },
       { axis: "aura", dir: 1, min: 2, text: "Smiling. Or something close to it." },
-      { axis: "aura", dir: 1, min: 2, text: "Tripped on the way in. Meant to?" },
-      { axis: "aura", dir: -1, min: 2, text: "Solemn. Straight-backed. Here for something true." },
+      { axis: "aura", dir: 1, min: 2, text: "Tripped on the way in. Meant to?", exclude_shapes: NO_LEGS },
+      { axis: "aura", dir: -1, min: 2, text: "Solemn. Straight-backed. Here for something true.", exclude_shapes: NO_UPRIGHT },
       { axis: "aura", dir: -1, min: 2, text: "Carrying a quiet gravity. Not heavy. Just real." }
     ],
     1: [ // contrast
-      { axis: "reach", dir: 1, min: 2, text: "Circled twice before landing." },
+      { axis: "reach", dir: 1, min: 2, text: "Circled twice before landing.", exclude_shapes: NOT_FLYING },
       { axis: "reach", dir: 1, min: 2, text: "From the same sky, but a different star." },
       { axis: "reach", dir: -1, min: 2, text: "Same ground. Different path across it." },
       { axis: "reach", dir: -1, min: 2, text: "A neighbour you never noticed." },
       { axis: "tempo", dir: 1, min: 2, text: "Waited for the first to settle. Then followed." },
       { axis: "tempo", dir: 1, min: 2, text: "Behind by a beat. Deliberately." },
-      { axis: "tempo", dir: -1, min: 2, text: "Came in on the tailwind. A little breathless." },
-      { axis: "tempo", dir: -1, min: 2, text: "Darted in after the first. Racing, or dancing." },
+      { axis: "tempo", dir: -1, min: 2, text: "Came in on the tailwind. A little breathless.", exclude_shapes: NOT_FLYING },
+      { axis: "tempo", dir: -1, min: 2, text: "Darted in after the first. Racing, or dancing.", exclude_shapes: NO_LEGS },
       { axis: "nature", dir: 1, min: 2, text: "Different blueprints. Same foundations." },
       { axis: "nature", dir: 1, min: 2, text: "Made of the same stuff, assembled differently." },
       { axis: "nature", dir: -1, min: 2, text: "A different season. Same forest." },
-      { axis: "nature", dir: -1, min: 2, text: "From downstream. Carried the same current." },
+      { axis: "nature", dir: -1, min: 2, text: "From downstream. Carried the same current.", types: ["water"] },
       { axis: "tether", dir: 1, min: 2, text: "Watching from a little further out. Curious." },
       { axis: "tether", dir: 1, min: 2, text: "Keeping its own distance. But still here." },
       { axis: "tether", dir: -1, min: 2, text: "Came looking for the first. Found you instead." },
@@ -300,12 +305,12 @@ Poke_Mystery.engine = (function() {
       { axis: "aura", dir: -1, min: 2, text: "Serious, but warm. Like it knew why it was here." }
     ],
     2: [ // wildcard
-      { axis: "reach", dir: 1, min: 2, text: "Drifted in from the periphery." },
+      { axis: "reach", dir: 1, min: 2, text: "Drifted in from the periphery.", exclude_shapes: NOT_FLYING },
       { axis: "reach", dir: 1, min: 2, text: "From a long way off. Took the scenic route." },
-      { axis: "reach", dir: -1, min: 2, text: "Stumbled in, looked around, stayed." },
+      { axis: "reach", dir: -1, min: 2, text: "Stumbled in, looked around, stayed.", exclude_shapes: NO_LEGS },
       { axis: "reach", dir: -1, min: 2, text: "Close to home. But not quite the same street." },
       { axis: "tempo", dir: 1, min: 2, text: "The last to arrive. Unbothered by that." },
-      { axis: "tempo", dir: 1, min: 2, text: "Sauntered in. No hurry. No apology." },
+      { axis: "tempo", dir: 1, min: 2, text: "Sauntered in. No hurry. No apology.", exclude_shapes: NO_LEGS },
       { axis: "tempo", dir: -1, min: 2, text: "Late. Or early. Hard to tell with this one." },
       { axis: "tempo", dir: -1, min: 2, text: "Burst through. Didn't knock." },
       { axis: "nature", dir: 1, min: 2, text: "Materialized from something orderly. Then broke formation." },
@@ -316,7 +321,7 @@ Poke_Mystery.engine = (function() {
       { axis: "tether", dir: 1, min: 2, text: "From further out than the rest. Still listening." },
       { axis: "tether", dir: -1, min: 2, text: "Invited itself. Brought snacks." },
       { axis: "tether", dir: -1, min: 2, text: "Tagged along with the second. Nobody minded." },
-      { axis: "aura", dir: 1, min: 2, text: "Tripped over the briefcase. Played it off." },
+      { axis: "aura", dir: 1, min: 2, text: "Tripped over the briefcase. Played it off.", exclude_shapes: NO_LEGS },
       { axis: "aura", dir: 1, min: 2, text: "Giggling in the corner. At what?" },
       { axis: "aura", dir: -1, min: 2, text: "Arrived with purpose. Didn't say what." },
       { axis: "aura", dir: -1, min: 2, text: "Stoic. Still. Watching you back." }
@@ -338,7 +343,12 @@ Poke_Mystery.engine = (function() {
       var dir = a.value > 0 ? 1 : -1;
 
       var matches = pool.filter(function(p) {
-        return p.axis === a.axis && p.dir === dir && a.abs >= (p.min || 0);
+        if (p.axis !== a.axis) return false;
+        if (p.dir !== dir) return false;
+        if (a.abs < (p.min || 0)) return false;
+        if (p.exclude_shapes && p.exclude_shapes.indexOf(pokemon.shape) !== -1) return false;
+        if (p.types && !p.types.some(function(t) { return pokemon.types.indexOf(t) !== -1; })) return false;
+        return true;
       });
 
       if (matches.length > 0) {

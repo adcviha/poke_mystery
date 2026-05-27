@@ -7,13 +7,15 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  background: transparent;
+}
+
 html, body {
   height: 100%;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 18px;
   color: #3a3a3a;
-  background: linear-gradient(135deg, #d4e6d4 0%, #dce8f0 50%, #e8dce8 100%);
-  transition: background 4s ease;
 }
 
 body {
@@ -23,6 +25,8 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
+  background: linear-gradient(135deg, #d4e6d4 0%, #dce8f0 50%, #e8dce8 100%);
+  transition: background 4s ease;
 }
 
 #app {
@@ -345,12 +349,6 @@ body {
   font-style: italic;
 }
 
-.shiny-text {
-  font-size: 1rem;
-  color: #b8860b;
-  font-weight: bold;
-  animation: fadeIn 1s ease;
-}
 
 /* --- "You are..." screen --- */
 

@@ -15,7 +15,7 @@ Poke_Mystery.environment = (function() {
 
     // Normalize accumulated vector to ~[-5,+5] range.
     // After 15 questions at ±3 per axis, typical max per axis is ~9-15.
-    var normDiv = 9;
+    var normDiv = 3;
     var r = vector[0] / normDiv;
     var t = vector[1] / normDiv;
     var n = vector[2] / normDiv;

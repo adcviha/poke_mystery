@@ -238,11 +238,6 @@ Poke_Mystery.ui = (function() {
     reveal.appendChild(nameWrap);
     reveal.appendChild(genusField);
 
-    if (isShiny) {
-      var sparkleText = el("div", "shiny-text", "It's a Shiny Pok&eacute;mon!");
-      reveal.appendChild(sparkleText);
-    }
-
     var retryBtn = el("button", "btn-retry", "Take the quiz again");
     retryBtn.addEventListener("click", onContinue);
 
