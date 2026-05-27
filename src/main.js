@@ -4,14 +4,18 @@
 
 Poke_Mystery.main = (function() {
 
+  // --- Toggles ---
+  var AESTHETIC_PROBE_ENABLED = true;
+
   var state = {
-    phase: "intro",           // intro | quiz | briefcase | trio | chosen
+    phase: "intro",           // intro | quiz | aesthetic | briefcase | trio | chosen
     currentQuestionIndex: 0,
     userVector: [0, 0, 0, 0, 0],
     activeQuestions: [],
     trio: [],
     chosenPokemon: null,
-    isShiny: false
+    isShiny: false,
+    aestheticPrefs: {}         // accumulated from aesthetic probe
   };
 
   var pokemonData = [];
@@ -25,8 +29,6 @@ Poke_Mystery.main = (function() {
     ui.init();
     env.init();
 
-    // Pokemon data is loaded inline by the build script; for dev, it's loaded
-    // from the global variable set by pokemon_coords.json
     pokemonData = (window.POKE_MYSTERY_DATA && window.POKE_MYSTERY_DATA.pokemon) || [];
 
     startQuiz();
@@ -42,6 +44,7 @@ Poke_Mystery.main = (function() {
     state.trio = [];
     state.chosenPokemon = null;
     state.isShiny = false;
+    state.aestheticPrefs = {};
     env.reset();
 
     ui.showIntro(function() {
@@ -60,7 +63,6 @@ Poke_Mystery.main = (function() {
     }
 
     ui.showQuestion(questions[idx], idx, questions.length, state.userVector, function(weight, btn) {
-      // Visual feedback
       btn.classList.add("selected");
       setTimeout(function() {
         answerQuestion(weight);
@@ -77,14 +79,50 @@ Poke_Mystery.main = (function() {
   }
 
   function finishQuiz() {
+    if (AESTHETIC_PROBE_ENABLED && Poke_Mystery.aestheticProbe) {
+      showAestheticProbe();
+    } else {
+      computeAndReveal();
+    }
+  }
+
+  // --- Aesthetic preference probe ---
+
+  function showAestheticProbe() {
+    state.phase = "aesthetic";
+    var probeQuestions = Poke_Mystery.aestheticProbe;
+    var currentIdx = 0;
+
+    function showNext() {
+      if (currentIdx >= probeQuestions.length) {
+        computeAndReveal();
+        return;
+      }
+
+      var q = probeQuestions[currentIdx];
+      ui.showAestheticQuestion(q, function(pref, btn) {
+        btn.classList.add("selected");
+        // Merge pref into accumulated aestheticPrefs
+        if (pref.shape) state.aestheticPrefs.shape = pref.shape;
+        if (pref.color) state.aestheticPrefs.color = pref.color;
+        if (pref.vibe) state.aestheticPrefs.vibe = pref.vibe;
+        currentIdx++;
+        setTimeout(showNext, 150);
+      });
+    }
+
+    showNext();
+  }
+
+  function computeAndReveal() {
     if (pokemonData.length === 0) {
-      // Fallback: if data isn't loaded, grab a random entry as mock
       state.trio = [sampleFallbackPokemon()];
       showTrio();
       return;
     }
 
-    state.trio = engine.nearestNeighbors(state.userVector, pokemonData, 3);
+    var hasPrefs = state.aestheticPrefs && (state.aestheticPrefs.shape || state.aestheticPrefs.color || state.aestheticPrefs.vibe);
+    state.trio = engine.selectTrio(state.userVector, pokemonData, hasPrefs ? state.aestheticPrefs : null);
     showBriefcase();
   }
 

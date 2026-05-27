@@ -554,6 +554,516 @@ Poke_Mystery.questions = [
       { text: "No, but I tell them about the recurring dream I've had since childhood. The one with the staircase that goes nowhere.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1.5, aura: -2 } },
       { text: "No, but now I want to. I'll start tomorrow. I'll probably forget by tomorrow.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1.5, aura: 2 } },
       { text: "No. My dreams are boring. Spreadsheets and missed buses. I'd rather not document that.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: -2 } }
+    ] },
+
+  // ================================================================
+  // REACH (Humble ↔ Cosmic) — 12 new questions (Q61–Q72)
+  // ================================================================
+
+  { id: "q61", primary: "reach", secondary: "tempo",
+    text: "Do you believe in luck?",
+    options: [
+      { text: "Yes. Things find people who need them.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No. You make your own.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q62", primary: "reach", secondary: "tether",
+    text: "A clear night sky makes you feel...",
+    options: [
+      { text: "Small, in a good way.", weight: { reach: 2.5, tempo: 0, nature: 0, tether: -1, aura: 0 } },
+      { text: "Curious. What's out there?", weight: { reach: 2.5, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "Homesick for somewhere you've never been.", weight: { reach: 2.5, tempo: 0, nature: 0, tether: 1, aura: 0 } }
+    ] },
+
+  { id: "q63", primary: "reach", secondary: "nature",
+    text: "What's the closest thing to magic?",
+    options: [
+      { text: "Love.", weight: { reach: 2, tempo: 0, nature: -1.5, tether: 0, aura: 0 } },
+      { text: "Science.", weight: { reach: 2, tempo: 0, nature: 1.5, tether: 0, aura: 0 } },
+      { text: "Coincidence.", weight: { reach: -2, tempo: 0, nature: 1.5, tether: 0, aura: 0 } },
+      { text: "Music.", weight: { reach: -2, tempo: 0, nature: -1.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q64", primary: "reach", secondary: "aura",
+    text: "Do you think about your own death?",
+    options: [
+      { text: "Yes. Not morbidly — it just floats through sometimes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
+      { text: "No. I've got things to do.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
+    ] },
+
+  { id: "q65", primary: "reach", secondary: "tether",
+    text: "Ever felt like you've lived before?",
+    options: [
+      { text: "Yes. Déjà vu is too specific to be nothing.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No. This is the one shot.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q66", primary: "reach", secondary: "nature",
+    text: "You see a mountain in the distance. Your first thought?",
+    options: [
+      { text: "I want to stand on top of it.", weight: { reach: 2.5, tempo: 0, nature: -0.5, tether: 0, aura: 0 } },
+      { text: "I wonder how it formed.", weight: { reach: -2.5, tempo: 0, nature: 0.5, tether: 0, aura: 0 } },
+      { text: "It's been there longer than I've been alive. That's enough.", weight: { reach: 2.5, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q67", primary: "reach", secondary: "aura",
+    text: "A cathedral. A cave. A library. Pick one.",
+    options: [
+      { text: "Cathedral. The hush.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Cave. The dark.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: 1.5 } },
+      { text: "Library. The evidence.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Library. The smell.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: 1.5 } }
+    ] },
+
+  { id: "q68", primary: "reach", secondary: "tempo",
+    text: "Big picture or details?",
+    options: [
+      { text: "Big picture.", weight: { reach: 3, tempo: -0.5, nature: 0, tether: 0, aura: 0 } },
+      { text: "Details.", weight: { reach: -3, tempo: 0.5, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q69", primary: "reach", secondary: "tether",
+    text: "What would you do with a million dollars?",
+    options: [
+      { text: "Travel. Everywhere.", weight: { reach: 2.5, tempo: 0, nature: 0, tether: 1, aura: 0 } },
+      { text: "Give most of it away.", weight: { reach: 2.5, tempo: 0, nature: 0, tether: -1, aura: 0 } },
+      { text: "Invest it quietly.", weight: { reach: -2.5, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q70", primary: "reach", secondary: "aura",
+    text: "Do you believe everything happens for a reason?",
+    options: [
+      { text: "Yes. Even if I can't see it yet.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
+      { text: "No. Things happen. We make meaning after.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
+    ] },
+
+  { id: "q71", primary: "reach", secondary: "nature",
+    text: "An hour alone with nothing to do. You...",
+    options: [
+      { text: "Stare out the window. The sky is doing something interesting.", weight: { reach: 1.5, tempo: 0, nature: -1.5, tether: 0, aura: 0 } },
+      { text: "Read everything within reach.", weight: { reach: -1.5, tempo: 0, nature: 1.5, tether: 0, aura: 0 } },
+      { text: "Write. Doesn't matter what.", weight: { reach: 1.5, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "Wander. Feet know where to go.", weight: { reach: -1.5, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q72", primary: "reach", secondary: "tempo",
+    text: "Do you collect things?",
+    options: [
+      { text: "Yes. Compulsively.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No. I travel light.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  // ================================================================
+  // TEMPO (Mercurial ↔ Stoic) — 12 new questions (Q73–Q84)
+  // ================================================================
+
+  { id: "q73", primary: "tempo", secondary: "reach",
+    text: "Are you drawn to storms or stillness?",
+    options: [
+      { text: "Storms. The wilder the better.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0 } },
+      { text: "Stillness. That's where things settle.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q74", primary: "tempo", secondary: "nature",
+    text: "Morning person or night owl?",
+    options: [
+      { text: "Morning. The world is new.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0 } },
+      { text: "Night. The world is mine.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q75", primary: "tempo", secondary: "tether",
+    text: "Someone cuts in line ahead of you.",
+    options: [
+      { text: "Say something immediately.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: -0.5, aura: 0 } },
+      { text: "Let it go. Not worth the energy.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0.5, aura: 0 } },
+      { text: "Say nothing but stew about it for an hour.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q76", primary: "tempo", secondary: "aura",
+    text: "A friend texts 'we need to talk.' Your reaction?",
+    options: [
+      { text: "Call them immediately. What happened?", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 0, aura: -1 } },
+      { text: "Wait. If it's urgent they'll call.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } },
+      { text: "Text back 'about what' with three question marks.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 0, aura: 1 } }
+    ] },
+
+  { id: "q77", primary: "tempo", secondary: "reach",
+    text: "Do you finish things or start things?",
+    options: [
+      { text: "Start. Endlessly.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0 } },
+      { text: "Finish. One at a time.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q78", primary: "tempo", secondary: "nature",
+    text: "A long train journey. No signal. What do you do?",
+    options: [
+      { text: "Stare out the window. Let thoughts come.", weight: { reach: 0, tempo: 2, nature: -1.5, tether: 0, aura: 0 } },
+      { text: "Read a book. Two books. Maybe three.", weight: { reach: 0, tempo: -2, nature: 1.5, tether: 0, aura: 0 } },
+      { text: "Talk to the stranger next to me.", weight: { reach: 0, tempo: -2, nature: -1.5, tether: 0, aura: 0 } },
+      { text: "Plan the next six months in a notebook.", weight: { reach: 0, tempo: 2, nature: 1.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q79", primary: "tempo", secondary: "aura",
+    text: "Is your room messy?",
+    options: [
+      { text: "Yes. Organised chaos.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "No. Everything has its place.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
+    ] },
+
+  { id: "q80", primary: "tempo", secondary: "tether",
+    text: "You're early to meet someone. What do you do?",
+    options: [
+      { text: "Pace.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 1, aura: 0 } },
+      { text: "Sit and watch people.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: -1, aura: 0 } },
+      { text: "Find a coffee. Make a thing of it.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q81", primary: "tempo", secondary: "nature",
+    text: "How do you feel about deadlines?",
+    options: [
+      { text: "I need them. Otherwise nothing happens.", weight: { reach: 0, tempo: -3, nature: 0.5, tether: 0, aura: 0 } },
+      { text: "I work ahead. I don't like the pressure.", weight: { reach: 0, tempo: 3, nature: -0.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q82", primary: "tempo", secondary: "reach",
+    text: "Your phone buzzes while you're in the middle of something.",
+    options: [
+      { text: "Check it. Could be anything.", weight: { reach: 0.5, tempo: -2, nature: 0, tether: 0, aura: 0 } },
+      { text: "Finish what I'm doing first.", weight: { reach: -0.5, tempo: 2, nature: 0, tether: 0, aura: 0 } },
+      { text: "Flip it over. Whatever it is can wait.", weight: { reach: -0.5, tempo: 2, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "Already checked it. It's nothing. Still checked it.", weight: { reach: 0.5, tempo: -2, nature: 0, tether: 0, aura: 0.5 } }
+    ] },
+
+  { id: "q83", primary: "tempo", secondary: "aura",
+    text: "Do you tap your foot or fidget?",
+    options: [
+      { text: "Constantly. My body doesn't do stillness.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "No. I'm pretty still.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
+    ] },
+
+  { id: "q84", primary: "tempo", secondary: "tether",
+    text: "A decision that needs making. How do you approach it?",
+    options: [
+      { text: "Quickly. Gut says go.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 1, aura: 0 } },
+      { text: "Talk it through with someone.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: -1, aura: 0 } },
+      { text: "Sleep on it. Always.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } }
+    ] },
+
+  // ================================================================
+  // NATURE (Wild ↔ Wrought) — 12 new questions (Q85–Q96)
+  // ================================================================
+
+  { id: "q85", primary: "nature", secondary: "reach",
+    text: "Do you trust your gut?",
+    options: [
+      { text: "Yes. It knows things I don't.", weight: { reach: 0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "No. Guts are for digestion.", weight: { reach: -0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q86", primary: "nature", secondary: "tempo",
+    text: "Rain on a tin roof. What does it do to you?",
+    options: [
+      { text: "Puts me to sleep. Best sound in the world.", weight: { reach: 0, tempo: 1, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "Makes me restless. I want to be out in it.", weight: { reach: 0, tempo: -1, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "I prefer the sound of a fan. Consistent. Controllable.", weight: { reach: 0, tempo: 0, nature: 2.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q87", primary: "nature", secondary: "tether",
+    text: "A bug lands on your hand. You...",
+    options: [
+      { text: "Look at it. Really look. Then let it go.", weight: { reach: 0, tempo: 0, nature: -2.5, tether: -1, aura: 0 } },
+      { text: "Flick it off.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 0 } },
+      { text: "Identify the species. There's probably an app for that.", weight: { reach: 0, tempo: 0, nature: 2.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q88", primary: "nature", secondary: "aura",
+    text: "Gardens or galleries?",
+    options: [
+      { text: "Gardens.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: -0.5 } },
+      { text: "Galleries.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: 0.5 } }
+    ] },
+
+  { id: "q89", primary: "nature", secondary: "reach",
+    text: "Wood or metal?",
+    options: [
+      { text: "Wood.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "Metal.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q90", primary: "nature", secondary: "tether",
+    text: "The best meals are eaten...",
+    options: [
+      { text: "Outside, with your hands.", weight: { reach: 0, tempo: 0, nature: -2, tether: -1.5, aura: 0 } },
+      { text: "Alone, in perfect quiet.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: 0 } },
+      { text: "At a table full of people talking over each other.", weight: { reach: 0, tempo: 0, nature: -2, tether: -1.5, aura: 0 } },
+      { text: "From a recipe you've been perfecting for two years.", weight: { reach: 0, tempo: 0, nature: 2, tether: 1.5, aura: 0 } }
+    ] },
+
+  { id: "q91", primary: "nature", secondary: "aura",
+    text: "Do you name your possessions?",
+    options: [
+      { text: "Yes. My car has a name. My plants have names.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: 0.5 } },
+      { text: "No. They're objects.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: -0.5 } }
+    ] },
+
+  { id: "q92", primary: "nature", secondary: "tempo",
+    text: "How do you feel about camping?",
+    options: [
+      { text: "Love it. Dirt, fire, stars — what else do you need?", weight: { reach: 0, tempo: -0.5, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "It's fine for a weekend. Then I want a shower.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No thanks. I like walls.", weight: { reach: 0, tempo: 0.5, nature: 2.5, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q93", primary: "nature", secondary: "reach",
+    text: "Analog or digital?",
+    options: [
+      { text: "Analog. Give me paper, a pen, a record player.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "Digital. Efficiency is beautiful.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+    ] },
+
+  { id: "q94", primary: "nature", secondary: "aura",
+    text: "A river in the woods. What do you do?",
+    options: [
+      { text: "Get in. Shoes and all.", weight: { reach: 0, tempo: 0, nature: -2, tether: 0, aura: 1.5 } },
+      { text: "Sit on the bank. Watch it move.", weight: { reach: 0, tempo: 0, nature: -2, tether: 0, aura: -1.5 } },
+      { text: "Photograph it. The light at this hour is perfect.", weight: { reach: 0, tempo: 0, nature: 2, tether: 0, aura: -1.5 } },
+      { text: "Build something across it. A bridge. A dam. A little rock tower.", weight: { reach: 0, tempo: 0, nature: 2, tether: 0, aura: 1.5 } }
+    ] },
+
+  { id: "q95", primary: "nature", secondary: "tether",
+    text: "Do you talk to animals?",
+    options: [
+      { text: "All the time. They're better listeners than people.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
+      { text: "No. They can't understand me.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0.5, aura: 0 } }
+    ] },
+
+  { id: "q96", primary: "nature", secondary: "tempo",
+    text: "A crack in the pavement. You notice it. Then what?",
+    options: [
+      { text: "Step over it. Move on.", weight: { reach: 0, tempo: -1, nature: 0, tether: 0, aura: 0 } },
+      { text: "Wonder what plant is pushing up from underneath.", weight: { reach: 0, tempo: 0, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "Think about infrastructure decay and municipal budgets.", weight: { reach: 0, tempo: 1, nature: 2.5, tether: 0, aura: 0 } },
+      { text: "Follow it. Cracks lead places.", weight: { reach: 0, tempo: -1, nature: -2.5, tether: 0, aura: 0 } }
+    ] },
+
+  // ================================================================
+  // TETHER (Kith ↔ Kinless) — 12 new questions (Q97–Q108)
+  // ================================================================
+
+  { id: "q97", primary: "tether", secondary: "reach",
+    text: "How many close friends do you need?",
+    options: [
+      { text: "A few. Deep, not wide.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
+      { text: "One. Maybe two. I'm not a collector.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
+    ] },
+
+  { id: "q98", primary: "tether", secondary: "tempo",
+    text: "Do you recharge alone or with others?",
+    options: [
+      { text: "Alone. Always have.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 3, aura: 0 } },
+      { text: "With others. Being around people fills me up.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: -3, aura: 0 } }
+    ] },
+
+  { id: "q99", primary: "tether", secondary: "nature",
+    text: "A secret told in confidence reaches you third-hand.",
+    options: [
+      { text: "Tell the person it's about. They deserve to know.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: -2.5, aura: 0 } },
+      { text: "Keep it. Secrets die with me.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 2.5, aura: 0 } },
+      { text: "Forget it. Gossip is noise.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2.5, aura: 0 } }
+    ] },
+
+  { id: "q100", primary: "tether", secondary: "aura",
+    text: "Would you rather give advice or receive it?",
+    options: [
+      { text: "Give it. I like being useful.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: -0.5 } },
+      { text: "Receive it. I want to know what you think.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: 0.5 } }
+    ] },
+
+  { id: "q101", primary: "tether", secondary: "reach",
+    text: "A stranger smiles at you on the street.",
+    options: [
+      { text: "Smile back. That was nice.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -2.5, aura: 0 } },
+      { text: "Smile back but wonder what they want.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 2.5, aura: 0 } },
+      { text: "Look away. Too much.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2.5, aura: 0 } }
+    ] },
+
+  { id: "q102", primary: "tether", secondary: "tempo",
+    text: "Do you remember birthdays?",
+    options: [
+      { text: "Yes. I have a system.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: -3, aura: 0 } },
+      { text: "My phone remembers for me.", weight: { reach: 0, tempo: 0, nature: 0, tether: 3, aura: 0 } }
+    ] },
+
+  { id: "q103", primary: "tether", secondary: "aura",
+    text: "You overhear someone talking about you. Do you listen?",
+    options: [
+      { text: "Yes. How often do you get to hear the truth?", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2.5 } },
+      { text: "Yes. But I'll pretend I didn't.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2.5 } },
+      { text: "No. Walk away. Not my business even if it's about me.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2.5 } }
+    ] },
+
+  { id: "q104", primary: "tether", secondary: "nature",
+    text: "A group photo. Where are you standing?",
+    options: [
+      { text: "Middle. Arms around people.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2, aura: 1.5 } },
+      { text: "Middle. But I'm making a face.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2, aura: -1.5 } },
+      { text: "Edge. I can slip out easier.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2, aura: -1.5 } },
+      { text: "Behind the camera. Someone has to take it.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2, aura: 1.5 } }
+    ] },
+
+  { id: "q105", primary: "tether", secondary: "reach",
+    text: "Do you need to be needed?",
+    options: [
+      { text: "Yes. It's how I know I matter.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
+      { text: "No. I matter anyway.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
+    ] },
+
+  { id: "q106", primary: "tether", secondary: "tempo",
+    text: "You've been invited to something. Your first instinct?",
+    options: [
+      { text: "Yes, sounds fun.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: -2.5, aura: 0 } },
+      { text: "Let me check my calendar.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 2.5, aura: 0 } },
+      { text: "Who else is going?", weight: { reach: 0, tempo: 0, nature: 0, tether: -2.5, aura: 0 } }
+    ] },
+
+  { id: "q107", primary: "tether", secondary: "aura",
+    text: "A crying child in a supermarket. You...",
+    options: [
+      { text: "Make a funny face at them. Sometimes that works.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2.5, aura: 1 } },
+      { text: "Feel for the parent. That's a rough Tuesday.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2.5, aura: -1 } },
+      { text: "Move to another aisle. Not my circus.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2.5, aura: 0 } }
+    ] },
+
+  { id: "q108", primary: "tether", secondary: "nature",
+    text: "Would you rather work alone or on a team?",
+    options: [
+      { text: "Alone. My rhythm is my own.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 3, aura: 0 } },
+      { text: "Team. I'm better with other brains in the room.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: -3, aura: 0 } }
+    ] },
+
+  // ================================================================
+  // AURA (Earnest ↔ Capricious) — 12 new questions (Q109–Q120)
+  // ================================================================
+
+  { id: "q109", primary: "aura", secondary: "reach",
+    text: "Do you ever laugh at the wrong moment?",
+    options: [
+      { text: "Constantly. Funerals, meetings, silent rooms.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "No. I have good timing.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q110", primary: "aura", secondary: "tempo",
+    text: "How do you feel about karaoke?",
+    options: [
+      { text: "Give me the mic. Now.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: 3 } },
+      { text: "Only if everyone else is doing it.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "Absolutely not. I'd rather write a ten-page essay.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q111", primary: "aura", secondary: "nature",
+    text: "Are you superstitious?",
+    options: [
+      { text: "A little. I still knock on wood.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: 0, aura: 2.5 } },
+      { text: "No. That's magical thinking.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 0, aura: -2.5 } }
+    ] },
+
+  { id: "q112", primary: "aura", secondary: "tether",
+    text: "A stranger at a bus stop starts telling you their life story.",
+    options: [
+      { text: "Sit down. This is going to be good.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: 2.5 } },
+      { text: "Listen politely. Nod. Miss my bus if I have to.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2.5 } },
+      { text: "Put headphones in. Sorry.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 0 } }
+    ] },
+
+  { id: "q113", primary: "aura", secondary: "reach",
+    text: "Do you dance when nobody's watching?",
+    options: [
+      { text: "Yes. And sometimes when they are.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "No. Not even alone.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q114", primary: "aura", secondary: "tempo",
+    text: "Someone tells you a joke you've heard before.",
+    options: [
+      { text: "Laugh anyway. They're trying.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: 2.5 } },
+      { text: "Say 'I've heard that one' and tell a better version.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: -2.5 } },
+      { text: "Smile tightly. Let it pass.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -2.5 } }
+    ] },
+
+  { id: "q115", primary: "aura", secondary: "nature",
+    text: "A clear puddle. An expensive pair of shoes.",
+    options: [
+      { text: "Jump in it.", weight: { reach: 0, tempo: 0, nature: -1.5, tether: 0, aura: 2 } },
+      { text: "Walk around. Carefully.", weight: { reach: 0, tempo: 0, nature: -1.5, tether: 0, aura: -2 } },
+      { text: "Jump in it but take the shoes off first.", weight: { reach: 0, tempo: 0, nature: 1.5, tether: 0, aura: 2 } },
+      { text: "Walk around. The shoes are irrelevant — I just don't want wet socks.", weight: { reach: 0, tempo: 0, nature: 1.5, tether: 0, aura: -2 } }
+    ] },
+
+  { id: "q116", primary: "aura", secondary: "tether",
+    text: "Do you sing in the shower?",
+    options: [
+      { text: "Absolutely. Full concert.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "No. The walls are thin.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q117", primary: "aura", secondary: "reach",
+    text: "You find a whoopee cushion on your chair.",
+    options: [
+      { text: "Laugh. Then find the culprit and plan revenge.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 2.5 } },
+      { text: "Sigh. Remove it. Pretend it didn't happen.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -2.5 } },
+      { text: "Sit on it immediately. Commit to the bit.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 2.5 } }
+    ] },
+
+  { id: "q118", primary: "aura", secondary: "tempo",
+    text: "Can you keep a straight face during a serious moment?",
+    options: [
+      { text: "No. My face betrays me every time.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: 3 } },
+      { text: "Yes. I have composure.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q119", primary: "aura", secondary: "nature",
+    text: "A dog dressed in a tiny sweater. Your reaction?",
+    options: [
+      { text: "Delighted. This is what the internet was made for.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "The dog looks humiliated. Free it.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+    ] },
+
+  { id: "q120", primary: "aura", secondary: "tether",
+    text: "You trip in public. Nothing serious — just a stumble.",
+    options: [
+      { text: "Take a bow. If they're going to look anyway.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2 } },
+      { text: "Laugh at myself. Then check if anyone saw.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: 2 } },
+      { text: "Keep walking. No eye contact. It didn't happen.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2 } },
+      { text: "Freeze. Assess the damage. Recover with dignity.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2 } }
     ] }
 
+];
+
+// ===== Aesthetic Preference Probe =====
+// 3 quick questions asked after the quiz, before the briefcase.
+// Answers post-filter the trio without touching the 5D vector.
+// Toggle: set AESTHETIC_PROBE_ENABLED in main.js.
+
+Poke_Mystery.aestheticProbe = [
+  { id: "ap1",
+    text: "Round and soft, or sharp and angular?",
+    options: [
+      { text: "Round and soft.", pref: { shape: "soft" } },
+      { text: "Sharp and angular.", pref: { shape: "sharp" } },
+      { text: "No preference.", pref: {} }
+    ] },
+  { id: "ap2",
+    text: "Warm colours, or cool colours?",
+    options: [
+      { text: "Warm — reds, golds, earth tones.", pref: { color: "warm" } },
+      { text: "Cool — blues, greens, silvers.", pref: { color: "cool" } },
+      { text: "No preference.", pref: {} }
+    ] },
+  { id: "ap3",
+    text: "Cute, cool, or weird?",
+    options: [
+      { text: "Cute.", pref: { vibe: "cute" } },
+      { text: "Cool.", pref: { vibe: "cool" } },
+      { text: "Weird.", pref: { vibe: "weird" } }
+    ] }
 ];

@@ -217,31 +217,71 @@ weights in [-3, +3], the theoretical range per axis is [-45, +45]. In practice,
 most users end up in [-15, +15] because weights average out.
 ```
 
-### Nearest-Neighbor Matching
+### Diversified Trio Selection
+
+Raw top-3 nearest neighbors tend to cluster visually and thematically. The engine
+uses a Mirror / Shadow / Stranger algorithm to create a compelling, diverse trio
+from the user's 5D orbital region.
 
 ```
-for each pokemon in precomputed cloud:
-    distance = euclidean(user_vector, pokemon.coords)
-    // Euclidean distance in 5D:
-    // sqrt(sum((u[i] - p[i])^2 for i in 0..4))
+function selectTrio(userVector, pokemonData, aestheticPrefs):
+    scored = score_all(userVector, pokemonData)  // sorted by Euclidean distance
 
-top_3 = sort by distance ascending, take first 3
+    // Mirror — the #1 nearest neighbor
+    mirror = scored[0].pokemon
+
+    // Shadow — from top 5–40, maximize 5D distance from Mirror
+    // while staying close to user
+    shadowCandidates = scored[5:40]
+    for each candidate:
+        score = distFromMirror * 0.7 - distFromUser * 0.3
+    shadow = candidate with highest score
+
+    // Stranger — from top 15–80, maximize min distance from both Mirror and Shadow
+    strangerCandidates = scored[15:80]
+    for each candidate:
+        score = min(distFromMirror, distFromShadow) * 0.7 - distFromUser * 0.3
+    stranger = candidate with highest score
+
+    trio = [mirror, shadow, stranger]
+
+    // Visual diversity constraint: all three must have different colors AND shapes
+    if any two share color or shape, swap the later one for the next candidate
+    that breaks the visual tie.
+
+    // Aesthetic post-filter (optional, toggled via AESTHETIC_PROBE_ENABLED)
+    if aestheticPrefs:
+        re-rank top 60 by: distance_rank * 0.6 + aesthetic_score * 0.4
+        aesthetic_score uses shape preference (soft/sharp), color preference
+        (warm/cool), and vibe preference (cute/cool/weird)
+        pick Mirror/Shadow/Stranger from reranked pool with visual diversity
+
+    return trio
 ```
 
-If user_vector is all zeros (no questions answered, edge case), return
-3 random Pokémon from the middle of the cloud (exclude legendaries).
+### Aesthetic Preference Probe
+
+Three quick questions asked after the 15 quiz questions, before the briefcase.
+Answers post-filter the trio without touching the 5D vector:
+
+1. "Round and soft, or sharp and angular?" → sets shape preference
+2. "Warm colours, or cool colours?" → sets color preference
+3. "Cute, cool, or weird?" → sets vibe preference
+
+Toggle: `AESTHETIC_PROBE_ENABLED` in main.js.
 
 ### Shiny Roll
 
 ```
 function shinyRoll(selectedPokemon):
-    roll = Math.floor(Math.random() * 50)  // 0..49
-    if roll === 0:                          // 1-in-50
+    roll = Math.floor(Math.random() * 10)  // 0..9
+    if roll === 0:                          // 1-in-10
         return { isShiny: true, artwork: selectedPokemon.artwork_shiny_url }
     else:
         return { isShiny: false, artwork: selectedPokemon.artwork_url }
 ```
 
+A twinkling star (★) appears next to the Pokémon name on a successful shiny roll.
 The shiny roll fires ONCE, at the moment the user selects their starter from the trio.
 It does not pre-roll or show odds. The magic is in not knowing until you choose.
 

@@ -50,23 +50,47 @@ Poke_Mystery.ui = (function() {
     clear(container);
     var screen = el("div", "screen question-screen");
 
-    // Progress indicator (subtle — just a number)
     var progress = el("div", "question-progress", (index + 1) + " / " + total);
     screen.appendChild(progress);
 
-    // Question text
     var text = el("div", "question-text", question.text);
     screen.appendChild(text);
 
-    // Options
     var opts = el("div", "question-options");
     var numOpts = question.options.length;
-    var optClass = "opt-" + numOpts;  // opt-2, opt-3, opt-4
+    var optClass = "opt-" + numOpts;
 
     question.options.forEach(function(option) {
       var btn = el("button", "option-btn " + optClass, option.text);
       btn.addEventListener("click", function() {
         onAnswer(option.weight, btn);
+      });
+      opts.appendChild(btn);
+    });
+
+    screen.appendChild(opts);
+    container.appendChild(screen);
+  }
+
+  // --- Aesthetic preference question ---
+
+  function showAestheticQuestion(question, onAnswer) {
+    clear(container);
+    var screen = el("div", "screen aesthetic-screen");
+
+    var label = el("div", "aesthetic-label", "One last thing...");
+    screen.appendChild(label);
+
+    var text = el("div", "question-text", question.text);
+    screen.appendChild(text);
+
+    var opts = el("div", "question-options");
+    var numOpts = question.options.length;
+
+    question.options.forEach(function(option) {
+      var btn = el("button", "option-btn opt-" + numOpts, option.text);
+      btn.addEventListener("click", function() {
+        onAnswer(option.pref, btn);
       });
       opts.appendChild(btn);
     });
@@ -90,7 +114,6 @@ Poke_Mystery.ui = (function() {
     screen.appendChild(briefcase);
     container.appendChild(screen);
 
-    // After a pause, trigger opening animation
     setTimeout(function() {
       briefcase.classList.add("open");
       setTimeout(function() { onComplete(briefcase); }, 800);
@@ -100,7 +123,6 @@ Poke_Mystery.ui = (function() {
   // --- Trio reveal ---
 
   function showTrio(trio, onChoose) {
-    // The briefcase screen stays; we add trio cards inside it
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -150,17 +172,26 @@ Poke_Mystery.ui = (function() {
     img.src = isShiny ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : pokemon.artwork_url;
     img.alt = pokemon.name;
 
-    var nameField = el("div", "shiny-name", capitalise(pokemon.name));
-    var genusField = el("div", "shiny-genus", pokemon.genus || "");
+    var nameWrap = el("div", "shiny-name-wrap");
+
+    var nameField = el("span", "shiny-name", capitalise(pokemon.name));
 
     if (isShiny) {
       reveal.classList.add("is-shiny");
       var flash = el("div", "shiny-flash");
       reveal.appendChild(flash);
+
+      var star = el("span", "shiny-star", "★"); // ★
+      nameWrap.appendChild(nameField);
+      nameWrap.appendChild(star);
+    } else {
+      nameWrap.appendChild(nameField);
     }
 
+    var genusField = el("div", "shiny-genus", pokemon.genus || "");
+
     reveal.appendChild(img);
-    reveal.appendChild(nameField);
+    reveal.appendChild(nameWrap);
     reveal.appendChild(genusField);
 
     if (isShiny) {
@@ -178,20 +209,18 @@ Poke_Mystery.ui = (function() {
   // --- Environment update ---
 
   function updateEnvironment(vector) {
-    // Update CSS custom properties on body for subtle background shifts
     var hues = {
-      reach: 120,   // green (nature/cosmic)
-      tempo: 200,    // blue (calm/hectic)
-      nature: 90,    // yellow-green (organic/synthetic)
-      tether: 30,    // warm (kith) to cool (kinless)
-      aura: 280      // purple (earnest/capricious)
+      reach: 120,
+      tempo: 200,
+      nature: 90,
+      tether: 30,
+      aura: 280
     };
     var axes = ["reach", "tempo", "nature", "tether", "aura"];
     var body = document.body;
 
     axes.forEach(function(axis, i) {
       var val = vector[i];
-      // Map axis value [-inf, +inf] to hue shift [-20, +20]
       var shift = Math.max(-20, Math.min(20, val * 1.5));
       body.style.setProperty("--hue-" + axis, (hues[axis] + shift));
       body.style.setProperty("--sat-" + axis, (50 + Math.abs(val) * 3) + "%");
@@ -213,6 +242,7 @@ Poke_Mystery.ui = (function() {
     init: init,
     showIntro: showIntro,
     showQuestion: showQuestion,
+    showAestheticQuestion: showAestheticQuestion,
     showBriefcase: showBriefcase,
     showTrio: showTrio,
     showShinyRoll: showShinyRoll,
