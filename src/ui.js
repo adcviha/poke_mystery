@@ -120,9 +120,33 @@ Poke_Mystery.ui = (function() {
     }, 1800);
   }
 
+  // --- "You are..." screen ---
+
+  function showYouAre(text, onComplete) {
+    clear(container);
+    var screen = el("div", "screen you-are-screen");
+
+    var label = el("div", "you-are-label", "The briefcase stirs...");
+    var body = el("div", "you-are-text", text);
+
+    screen.appendChild(label);
+    screen.appendChild(body);
+
+    screen.addEventListener("click", function() {
+      onComplete();
+    });
+
+    // Auto-advance after a generous read time
+    setTimeout(function() {
+      onComplete();
+    }, 6000);
+
+    container.appendChild(screen);
+  }
+
   // --- Trio reveal ---
 
-  function showTrio(trio, onChoose) {
+  function showTrio(trio, phrases, shinyIndex, onChoose) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -133,20 +157,30 @@ Poke_Mystery.ui = (function() {
 
     var cards = el("div", "trio-cards");
 
-    trio.forEach(function(pokemon, i) {
-      var card = el("div", "pokemon-card card-" + (i + 1));
+    // Layout: mirror(0)=center, shadow(1)=left, stranger(2)=right
+    var order = [1, 0, 2]; // shadow, mirror, stranger
+    var positions = ["trio-left", "trio-center", "trio-right"];
+
+    order.forEach(function(origIdx, displayIdx) {
+      var pokemon = trio[origIdx];
+      var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
+      var isShinyCard = (origIdx === shinyIndex);
+
+      var card = el("div", "pokemon-card " + positions[displayIdx]);
 
       var img = el("img", "card-artwork");
-      img.src = pokemon.artwork_url || "";
+      img.src = isShinyCard ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
       img.alt = pokemon.name;
       img.loading = "lazy";
 
       var name = el("div", "card-name", capitalise(pokemon.name));
       var genus = el("div", "card-genus", pokemon.genus || "");
+      var phraseDiv = el("div", "card-phrase", phrase);
 
       card.appendChild(img);
       card.appendChild(name);
       card.appendChild(genus);
+      card.appendChild(phraseDiv);
 
       card.addEventListener("click", function() {
         onChoose(pokemon);
@@ -243,6 +277,7 @@ Poke_Mystery.ui = (function() {
     showIntro: showIntro,
     showQuestion: showQuestion,
     showAestheticQuestion: showAestheticQuestion,
+    showYouAre: showYouAre,
     showBriefcase: showBriefcase,
     showTrio: showTrio,
     showShinyRoll: showShinyRoll,

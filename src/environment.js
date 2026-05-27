@@ -13,13 +13,14 @@ Poke_Mystery.environment = (function() {
   function update(vector) {
     if (!body) return;
 
-    // Map each axis to hue/saturation shifts
-    // Reach: green (Humble=earthy green, Cosmic=deep indigo)
-    var r = Math.max(-5, Math.min(5, vector[0]));
-    var t = Math.max(-5, Math.min(5, vector[1]));
-    var n = Math.max(-5, Math.min(5, vector[2]));
-    var th = Math.max(-5, Math.min(5, vector[3]));
-    var a = Math.max(-5, Math.min(5, vector[4]));
+    // Normalize accumulated vector to ~[-5,+5] range.
+    // After 15 questions at ±3 per axis, typical max per axis is ~9-15.
+    var normDiv = 9;
+    var r = vector[0] / normDiv;
+    var t = vector[1] / normDiv;
+    var n = vector[2] / normDiv;
+    var th = vector[3] / normDiv;
+    var a = vector[4] / normDiv;
 
     // Base hue shifts
     var hueReach = 100 + r * 12;     // Humble=green(100), Cosmic=blue(160)

@@ -5,14 +5,16 @@
 Poke_Mystery.main = (function() {
 
   // --- Toggles ---
-  var AESTHETIC_PROBE_ENABLED = true;
+  var AESTHETIC_PROBE_ENABLED = false;
 
   var state = {
-    phase: "intro",           // intro | quiz | aesthetic | briefcase | trio | chosen
+    phase: "intro",           // intro | quiz | youare | briefcase | trio | chosen
     currentQuestionIndex: 0,
     userVector: [0, 0, 0, 0, 0],
     activeQuestions: [],
     trio: [],
+    trioPhrases: [],           // arrival phrases for each trio card
+    shinyIndex: 0,             // which trio card shows shiny (0, 1, or 2)
     chosenPokemon: null,
     isShiny: false,
     aestheticPrefs: {}         // accumulated from aesthetic probe
@@ -42,6 +44,8 @@ Poke_Mystery.main = (function() {
     state.userVector = [0, 0, 0, 0, 0];
     state.activeQuestions = engine.sampleQuestions(Poke_Mystery.questions, 15);
     state.trio = [];
+    state.trioPhrases = [];
+    state.shinyIndex = 0;
     state.chosenPokemon = null;
     state.isShiny = false;
     state.aestheticPrefs = {};
@@ -117,13 +121,33 @@ Poke_Mystery.main = (function() {
   function computeAndReveal() {
     if (pokemonData.length === 0) {
       state.trio = [sampleFallbackPokemon()];
-      showTrio();
+      state.trioPhrases = [""];
+      state.shinyIndex = 0;
+      showBriefcase();
       return;
     }
 
     var hasPrefs = state.aestheticPrefs && (state.aestheticPrefs.shape || state.aestheticPrefs.color || state.aestheticPrefs.vibe);
     state.trio = engine.selectTrio(state.userVector, pokemonData, hasPrefs ? state.aestheticPrefs : null);
-    showBriefcase();
+
+    // Generate arrival phrases for each role
+    state.trioPhrases = state.trio.map(function(p, i) {
+      return engine.phraseForRole(p, i);
+    });
+
+    // Pick which card gets the shiny
+    state.shinyIndex = engine.shinyWhich();
+
+    // Show "You are..." screen before the briefcase
+    showYouAreScreen();
+  }
+
+  function showYouAreScreen() {
+    state.phase = "youare";
+    var description = engine.describeVector(state.userVector);
+    ui.showYouAre(description, function() {
+      showBriefcase();
+    });
   }
 
   function showBriefcase() {
@@ -135,7 +159,7 @@ Poke_Mystery.main = (function() {
 
   function showTrio() {
     state.phase = "trio";
-    ui.showTrio(state.trio, function(pokemon) {
+    ui.showTrio(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
       choosePokemon(pokemon);
     });
   }

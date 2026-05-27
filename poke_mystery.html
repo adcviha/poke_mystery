@@ -348,7 +348,60 @@ body {
   animation: fadeIn 1s ease;
 }
 
-/* --- Aesthetic probe --- */
+/* --- "You are..." screen --- */
+
+.you-are-screen {
+  text-align: center;
+  gap: 2rem;
+  cursor: pointer;
+}
+
+.you-are-label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.you-are-text {
+  font-size: 1.2rem;
+  line-height: 1.75;
+  color: #4a4a4a;
+  max-width: 460px;
+  font-style: italic;
+}
+
+/* --- Trio cards — center layout --- */
+
+.trio-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.trio-center {
+  transform: scale(1.05);
+}
+
+.trio-center:hover {
+  transform: scale(1.08) translateY(-4px);
+}
+
+/* --- Card arrival phrase --- */
+
+.card-phrase {
+  font-size: 0.72rem;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 0.25rem;
+  max-width: 140px;
+}
 
 .aesthetic-screen {
   text-align: center;
@@ -414,8 +467,8 @@ Poke_Mystery.questions = [
   { id: "q01", primary: "reach", secondary: "tempo",
     text: "Do you believe in ghosts?",
     options: [
-      { text: "Yes. There's too much we can't explain.", weight: { reach: 3, tempo: 0.5, nature: 0, tether: 0, aura: 0 } },
-      { text: "No. I'll believe it when I see it.", weight: { reach: -3, tempo: -0.5, nature: 0, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0.5, nature: 0, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: -3, tempo: -0.5, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   { id: "q02", primary: "reach", secondary: "tempo",
@@ -466,8 +519,8 @@ Poke_Mystery.questions = [
   { id: "q07", primary: "reach", secondary: "nature",
     text: "Do you think the universe has a purpose?",
     options: [
-      { text: "Yes. I don't know what it is, but I feel it.", weight: { reach: 3, tempo: 0, nature: -0.5, tether: 0, aura: 0 } },
-      { text: "No. Things just are. That's enough.", weight: { reach: -3, tempo: 0, nature: 0.5, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: -0.5, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0.5, tether: 0, aura: 0 } }
     ] },
 
   { id: "q08", primary: "reach", secondary: "nature",
@@ -492,8 +545,8 @@ Poke_Mystery.questions = [
   { id: "q10", primary: "reach", secondary: "aura",
     text: "Do you pray?",
     options: [
-      { text: "Yes. Or something close to it.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
-      { text: "No. That's not how I'm wired.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
     ] },
 
   { id: "q11", primary: "reach", secondary: "aura",
@@ -574,8 +627,8 @@ Poke_Mystery.questions = [
   { id: "q19", primary: "tempo", secondary: "tether",
     text: "Are you often late?",
     options: [
-      { text: "Yes. Time is... flexible.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0.5, aura: 0 } },
-      { text: "No. Being late is disrespectful.", weight: { reach: 0, tempo: 3, nature: 0, tether: -0.5, aura: 0 } }
+      { text: "Yes.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0.5, aura: 0 } },
+      { text: "No.", weight: { reach: 0, tempo: 3, nature: 0, tether: -0.5, aura: 0 } }
     ] },
 
   { id: "q20", primary: "tempo", secondary: "tether",
@@ -600,8 +653,8 @@ Poke_Mystery.questions = [
   { id: "q22", primary: "tempo", secondary: "aura",
     text: "When you see a switch, do you feel an overwhelming urge to flip it?",
     options: [
-      { text: "Yes. Every time.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
-      { text: "No. That's weird.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
     ] },
 
   { id: "q23", primary: "tempo", secondary: "aura",
@@ -615,10 +668,10 @@ Poke_Mystery.questions = [
   { id: "q24", primary: "tempo", secondary: "aura",
     text: "You find an old clock in a junk shop. It still works. Do you buy it?",
     options: [
-      { text: "Yes. The ticking belongs in my house. It'll give the rooms a pulse.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: -1.5 } },
-      { text: "Yes. But I'm going to set it eleven minutes slow on purpose. See who notices.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: 1.5 } },
-      { text: "No. I don't need more objects. My phone tells time.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: 1.5 } },
-      { text: "No. A stopped clock is more honest. Not everything needs to run.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: -1.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: 1.5 } },
+      { text: "No.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: 1.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: -1.5 } }
     ] },
 
   // ================================================================
@@ -630,8 +683,8 @@ Poke_Mystery.questions = [
   { id: "q25", primary: "nature", secondary: "reach",
     text: "Do you prefer to play outside rather than inside?",
     options: [
-      { text: "Yes. Outside is where everything actually happens.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
-      { text: "No. Inside has internet, climate control, and fewer bugs.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
     ] },
 
   { id: "q26", primary: "nature", secondary: "reach",
@@ -682,7 +735,7 @@ Poke_Mystery.questions = [
   { id: "q31", primary: "nature", secondary: "tether",
     text: "Do you trust your instincts?",
     options: [
-      { text: "Yes. They've kept me alive this long.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
       { text: "Not really. That's why I double-check everything.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0.5, aura: 0 } }
     ] },
 
@@ -708,8 +761,8 @@ Poke_Mystery.questions = [
   { id: "q34", primary: "nature", secondary: "aura",
     text: "Do you believe in fate?",
     options: [
-      { text: "Yes. Things connect in ways I can't explain.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: -0.5 } },
-      { text: "No. We tell ourselves stories to make randomness feel meaningful.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: 0.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: -0.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: 0.5 } }
     ] },
 
   { id: "q35", primary: "nature", secondary: "aura",
@@ -738,8 +791,8 @@ Poke_Mystery.questions = [
   { id: "q37", primary: "tether", secondary: "reach",
     text: "Do you feel lonely when you're alone?",
     options: [
-      { text: "Yes. I'm not embarrassed by that.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
-      { text: "No. Alone and lonely are completely different things.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
+      { text: "Yes.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
+      { text: "No.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
     ] },
 
   { id: "q38", primary: "tether", secondary: "reach",
@@ -764,14 +817,14 @@ Poke_Mystery.questions = [
   { id: "q40", primary: "tether", secondary: "tempo",
     text: "Do you hate being the last person to leave?",
     options: [
-      { text: "Yes. An empty room feels different.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: -3, aura: 0 } },
-      { text: "No. I kind of like it. The quiet after.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 3, aura: 0 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: -3, aura: 0 } },
+      { text: "No.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 3, aura: 0 } }
     ] },
 
   { id: "q41", primary: "tether", secondary: "tempo",
     text: "Someone you barely know asks if you want to grab coffee.",
     options: [
-      { text: "Yes. That's how friendships start.", weight: { reach: 0, tempo: -1, nature: 0, tether: -2.5, aura: 0 } },
+      { text: "Yes.", weight: { reach: 0, tempo: -1, nature: 0, tether: -2.5, aura: 0 } },
       { text: "Maybe. Let me check my calendar.", weight: { reach: 0, tempo: 1, nature: 0, tether: 2.5, aura: 0 } },
       { text: "Yes, but I need at least a day's notice. Spontaneity is not my thing.", weight: { reach: 0, tempo: 1, nature: 0, tether: 2.5, aura: 0 } }
     ] },
@@ -816,8 +869,8 @@ Poke_Mystery.questions = [
   { id: "q46", primary: "tether", secondary: "aura",
     text: "Do you like parties?",
     options: [
-      { text: "Yes. The noise, the people, the chaos. I come alive in it.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: 0.5 } },
-      { text: "No. I'd rather be home.", weight: { reach: 0, tempo: 0, nature: 0, tether: 3, aura: -0.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: 0.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: 3, aura: -0.5 } }
     ] },
 
   { id: "q47", primary: "tether", secondary: "aura",
@@ -846,14 +899,14 @@ Poke_Mystery.questions = [
   { id: "q49", primary: "aura", secondary: "reach",
     text: "Do you like pranks?",
     options: [
-      { text: "Yes. Both sides.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 0, aura: 3 } },
-      { text: "No. People get hurt, even when nobody means to.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+      { text: "Yes.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "No.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q50", primary: "aura", secondary: "reach",
     text: "Have you ever blurted something out and immediately regretted it?",
     options: [
-      { text: "Yes. More times than I can count.", weight: { reach: -1, tempo: 0, nature: 0, tether: 0, aura: 2.5 } },
+      { text: "Yes.", weight: { reach: -1, tempo: 0, nature: 0, tether: 0, aura: 2.5 } },
       { text: "Yes, and I've turned it into a bit. Now people think I'm just 'honest.'", weight: { reach: 1, tempo: 0, nature: 0, tether: 0, aura: 2.5 } },
       { text: "Rarely. I think before I speak.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -2.5 } }
     ] },
@@ -872,8 +925,8 @@ Poke_Mystery.questions = [
   { id: "q52", primary: "aura", secondary: "tempo",
     text: "Do you often yawn?",
     options: [
-      { text: "Yes. Constantly. My body is always trying to reboot.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: 3 } },
-      { text: "No. I'm pretty alert.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: -3 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: 3 } },
+      { text: "No.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q53", primary: "aura", secondary: "tempo",
@@ -924,7 +977,7 @@ Poke_Mystery.questions = [
   { id: "q58", primary: "aura", secondary: "tether",
     text: "Do you laugh a lot?",
     options: [
-      { text: "Yes. Sometimes at nothing. Sometimes at the worst possible moment.", weight: { reach: 0, tempo: 0, nature: 0, tether: -0.5, aura: 3 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: -0.5, aura: 3 } },
       { text: "Not really. I smile. That's different.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0.5, aura: -3 } }
     ] },
 
@@ -939,10 +992,10 @@ Poke_Mystery.questions = [
   { id: "q60", primary: "aura", secondary: "tether",
     text: "A friend tells you they've started keeping a dream journal. They ask if you keep one too.",
     options: [
-      { text: "Yes. Mine is unhinged. Last night I was a lighthouse. Not in a lighthouse. I WAS the lighthouse.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: 2 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: 2 } },
       { text: "No, but I tell them about the recurring dream I've had since childhood. The one with the staircase that goes nowhere.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1.5, aura: -2 } },
       { text: "No, but now I want to. I'll start tomorrow. I'll probably forget by tomorrow.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1.5, aura: 2 } },
-      { text: "No. My dreams are boring. Spreadsheets and missed buses. I'd rather not document that.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: -2 } }
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1.5, aura: -2 } }
     ] },
 
   // ================================================================
@@ -952,8 +1005,8 @@ Poke_Mystery.questions = [
   { id: "q61", primary: "reach", secondary: "tempo",
     text: "Do you believe in luck?",
     options: [
-      { text: "Yes. Things find people who need them.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
-      { text: "No. You make your own.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   { id: "q62", primary: "reach", secondary: "tether",
@@ -976,15 +1029,15 @@ Poke_Mystery.questions = [
   { id: "q64", primary: "reach", secondary: "aura",
     text: "Do you think about your own death?",
     options: [
-      { text: "Yes. Not morbidly — it just floats through sometimes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
-      { text: "No. I've got things to do.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
     ] },
 
   { id: "q65", primary: "reach", secondary: "tether",
     text: "Ever felt like you've lived before?",
     options: [
-      { text: "Yes. Déjà vu is too specific to be nothing.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
-      { text: "No. This is the one shot.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   { id: "q66", primary: "reach", secondary: "nature",
@@ -1022,8 +1075,8 @@ Poke_Mystery.questions = [
   { id: "q70", primary: "reach", secondary: "aura",
     text: "Do you believe everything happens for a reason?",
     options: [
-      { text: "Yes. Even if I can't see it yet.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
-      { text: "No. Things happen. We make meaning after.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
+      { text: "Yes.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: -0.5 } },
+      { text: "No.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0.5 } }
     ] },
 
   { id: "q71", primary: "reach", secondary: "nature",
@@ -1038,8 +1091,8 @@ Poke_Mystery.questions = [
   { id: "q72", primary: "reach", secondary: "tempo",
     text: "Do you collect things?",
     options: [
-      { text: "Yes. Compulsively.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
-      { text: "No. I travel light.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: -3, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: 3, tempo: 0, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   // ================================================================
@@ -1095,8 +1148,8 @@ Poke_Mystery.questions = [
   { id: "q79", primary: "tempo", secondary: "aura",
     text: "Is your room messy?",
     options: [
-      { text: "Yes. Organised chaos.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
-      { text: "No. Everything has its place.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
     ] },
 
   { id: "q80", primary: "tempo", secondary: "tether",
@@ -1127,7 +1180,7 @@ Poke_Mystery.questions = [
     text: "Do you tap your foot or fidget?",
     options: [
       { text: "Constantly. My body doesn't do stillness.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
-      { text: "No. I'm pretty still.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
+      { text: "No.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
     ] },
 
   { id: "q84", primary: "tempo", secondary: "tether",
@@ -1145,8 +1198,8 @@ Poke_Mystery.questions = [
   { id: "q85", primary: "nature", secondary: "reach",
     text: "Do you trust your gut?",
     options: [
-      { text: "Yes. It knows things I don't.", weight: { reach: 0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
-      { text: "No. Guts are for digestion.", weight: { reach: -0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+      { text: "Yes.", weight: { reach: 0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "No.", weight: { reach: -0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
     ] },
 
   { id: "q86", primary: "nature", secondary: "tempo",
@@ -1191,8 +1244,8 @@ Poke_Mystery.questions = [
   { id: "q91", primary: "nature", secondary: "aura",
     text: "Do you name your possessions?",
     options: [
-      { text: "Yes. My car has a name. My plants have names.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: 0.5 } },
-      { text: "No. They're objects.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: -0.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: -3, tether: 0, aura: 0.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0, aura: -0.5 } }
     ] },
 
   { id: "q92", primary: "nature", secondary: "tempo",
@@ -1223,7 +1276,7 @@ Poke_Mystery.questions = [
     text: "Do you talk to animals?",
     options: [
       { text: "All the time. They're better listeners than people.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
-      { text: "No. They can't understand me.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0.5, aura: 0 } }
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0.5, aura: 0 } }
     ] },
 
   { id: "q96", primary: "nature", secondary: "tempo",
@@ -1279,16 +1332,16 @@ Poke_Mystery.questions = [
   { id: "q102", primary: "tether", secondary: "tempo",
     text: "Do you remember birthdays?",
     options: [
-      { text: "Yes. I have a system.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: -3, aura: 0 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: -3, aura: 0 } },
       { text: "My phone remembers for me.", weight: { reach: 0, tempo: 0, nature: 0, tether: 3, aura: 0 } }
     ] },
 
   { id: "q103", primary: "tether", secondary: "aura",
     text: "You overhear someone talking about you. Do you listen?",
     options: [
-      { text: "Yes. How often do you get to hear the truth?", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2.5 } },
-      { text: "Yes. But I'll pretend I didn't.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2.5 } },
-      { text: "No. Walk away. Not my business even if it's about me.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2.5 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2.5 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2.5 } },
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2.5 } }
     ] },
 
   { id: "q104", primary: "tether", secondary: "nature",
@@ -1303,8 +1356,8 @@ Poke_Mystery.questions = [
   { id: "q105", primary: "tether", secondary: "reach",
     text: "Do you need to be needed?",
     options: [
-      { text: "Yes. It's how I know I matter.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
-      { text: "No. I matter anyway.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
+      { text: "Yes.", weight: { reach: -0.5, tempo: 0, nature: 0, tether: -3, aura: 0 } },
+      { text: "No.", weight: { reach: 0.5, tempo: 0, nature: 0, tether: 3, aura: 0 } }
     ] },
 
   { id: "q106", primary: "tether", secondary: "tempo",
@@ -1338,7 +1391,7 @@ Poke_Mystery.questions = [
     text: "Do you ever laugh at the wrong moment?",
     options: [
       { text: "Constantly. Funerals, meetings, silent rooms.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
-      { text: "No. I have good timing.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q110", primary: "aura", secondary: "tempo",
@@ -1353,7 +1406,7 @@ Poke_Mystery.questions = [
     text: "Are you superstitious?",
     options: [
       { text: "A little. I still knock on wood.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: 0, aura: 2.5 } },
-      { text: "No. That's magical thinking.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 0, aura: -2.5 } }
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 0, aura: -2.5 } }
     ] },
 
   { id: "q112", primary: "aura", secondary: "tether",
@@ -1367,8 +1420,8 @@ Poke_Mystery.questions = [
   { id: "q113", primary: "aura", secondary: "reach",
     text: "Do you dance when nobody's watching?",
     options: [
-      { text: "Yes. And sometimes when they are.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
-      { text: "No. Not even alone.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q114", primary: "aura", secondary: "tempo",
@@ -1392,7 +1445,7 @@ Poke_Mystery.questions = [
     text: "Do you sing in the shower?",
     options: [
       { text: "Absolutely. Full concert.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
-      { text: "No. The walls are thin.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
+      { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q117", primary: "aura", secondary: "reach",
@@ -1406,8 +1459,8 @@ Poke_Mystery.questions = [
   { id: "q118", primary: "aura", secondary: "tempo",
     text: "Can you keep a straight face during a serious moment?",
     options: [
-      { text: "No. My face betrays me every time.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: 3 } },
-      { text: "Yes. I have composure.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: -3 } }
+      { text: "No.", weight: { reach: 0, tempo: -0.5, nature: 0, tether: 0, aura: 3 } },
+      { text: "Yes.", weight: { reach: 0, tempo: 0.5, nature: 0, tether: 0, aura: -3 } }
     ] },
 
   { id: "q119", primary: "aura", secondary: "nature",
@@ -1459,18 +1512,17 @@ Poke_Mystery.aestheticProbe = [
 
 // ===== engine.js =====
 // ===== Poké_Mystery Engine =====
-// Vector accumulation, trio selection, shiny roll.
+// Vector accumulation, trio selection, shiny roll, vector description.
 // Attaches to window.Poke_Mystery.
 
 Poke_Mystery.engine = (function() {
 
   // --- Constants ---
-  var SHINY_ODDS = 10;  // 1-in-10
+  var SHINY_ODDS = 10;  // 1-in-10 personal shiny roll (on chosen Pokémon)
 
   // --- Question sampling ---
 
   function sampleQuestions(pool, count) {
-    // Stratified sample: pick count/5 from each primary axis
     var axes = ["reach", "tempo", "nature", "tether", "aura"];
     var perAxis = Math.floor(count / axes.length);
     var sampled = [];
@@ -1531,18 +1583,12 @@ Poke_Mystery.engine = (function() {
   }
 
   // --- Diversified trio selection ---
-  // Mirror: #1 nearest neighbor (strongest authentic match).
-  // Shadow: from top 40, max 5D distance from Mirror while close to user.
-  // Stranger: from top 80, max min-distance from both Mirror and Shadow.
-  // Visual constraint: trio must have different colors AND different shapes.
 
   function selectTrio(userVector, pokemonData, aestheticPrefs) {
     var scored = scoreAll(userVector, pokemonData);
 
-    // Mirror — closest match
     var mirror = scored[0].pokemon;
 
-    // Pool for Shadow: ranks 5–40 (skip the very top clones)
     var shadowCandidates = scored.slice(5, Math.min(40, scored.length));
     var bestShadow = null;
     var bestShadowScore = -Infinity;
@@ -1556,7 +1602,6 @@ Poke_Mystery.engine = (function() {
       }
     });
 
-    // Pool for Stranger: ranks 15–80, distant from both Mirror and Shadow
     var strangerCandidates = scored.slice(15, Math.min(80, scored.length));
     var bestStranger = null;
     var bestStrangerScore = -Infinity;
@@ -1574,9 +1619,6 @@ Poke_Mystery.engine = (function() {
 
     var trio = [mirror, bestShadow, bestStranger];
 
-    // --- Visual diversity constraint ---
-    // If any two share the same color or shape, swap the later one
-    // for another candidate with a different visual profile.
     if (aestheticPrefs) {
       trio = applyAestheticFilter(trio, scored, aestheticPrefs);
     } else {
@@ -1586,11 +1628,9 @@ Poke_Mystery.engine = (function() {
     return trio;
   }
 
-  // Ensure all three Pokémon have different colors AND different shapes.
   function ensureVisualDiversity(trio, scored) {
     var result = trio.slice();
 
-    // Fix Shadow if it shares color or shape with Mirror
     if (sharesVisual(result[0], result[1])) {
       for (var i = 5; i < Math.min(60, scored.length); i++) {
         if (!sharesVisual(result[0], scored[i].pokemon) &&
@@ -1601,7 +1641,6 @@ Poke_Mystery.engine = (function() {
       }
     }
 
-    // Fix Stranger if it shares color or shape with Mirror or Shadow
     if (sharesVisual(result[0], result[2]) || sharesVisual(result[1], result[2])) {
       for (var j = 15; j < Math.min(100, scored.length); j++) {
         if (!sharesVisual(result[0], scored[j].pokemon) &&
@@ -1617,16 +1656,10 @@ Poke_Mystery.engine = (function() {
 
   function sharesVisual(a, b) {
     if (!a || !b) return false;
-    var aColor = a.color || "";
-    var bColor = b.color || "";
-    var aShape = a.shape || "";
-    var bShape = b.shape || "";
-    return aColor === bColor || aShape === bShape;
+    return (a.color || "") === (b.color || "") || (a.shape || "") === (b.shape || "");
   }
 
-  // --- Aesthetic preference filter ---
-  // aestheticPrefs: { shape: "soft"|"sharp"|null, color: "warm"|"cool"|null, vibe: "cute"|"cool"|"weird"|null }
-  // Re-ranks the top 60 by: distance_rank * 0.6 + aesthetic_score * 0.4
+  // --- Aesthetic preference filter (toggleable) ---
 
   var SHAPE_SOFT = ["ball", "blob", "squiggle", "upright"];
   var SHAPE_SHARP = ["armor", "humanoid", "bug-wings", "legs", "quadruped", "wings", "heads"];
@@ -1635,42 +1668,26 @@ Poke_Mystery.engine = (function() {
 
   function applyAestheticFilter(trio, scored, prefs) {
     var topPool = scored.slice(0, Math.min(60, scored.length));
-
     var reranked = topPool.map(function(s, idx) {
       var score = aestheticScore(s.pokemon, prefs);
-      // Blend: distance rank normalized to [0,1] and aesthetic score
       var rankNorm = 1 - (idx / topPool.length);
-      var combined = rankNorm * 0.6 + score * 0.4;
-      return { pokemon: s.pokemon, combined: combined };
+      return { pokemon: s.pokemon, combined: rankNorm * 0.6 + score * 0.4 };
     });
-
     reranked.sort(function(a, b) { return b.combined - a.combined; });
 
-    // Pick Mirror from top of reranked, then Shadow/Stranger with visual diversity
-    // Mirror: top aesthetic match that's also in the original top 10 by distance
     var mirror = reranked[0].pokemon;
     var shadow = null;
-    var stranger = null;
-
-    // Shadow: find a visually different one from the reranked pool
     for (var i = 1; i < reranked.length; i++) {
-      if (!sharesVisual(mirror, reranked[i].pokemon)) {
-        shadow = reranked[i].pokemon;
-        break;
-      }
+      if (!sharesVisual(mirror, reranked[i].pokemon)) { shadow = reranked[i].pokemon; break; }
     }
     if (!shadow) shadow = reranked[1].pokemon;
-
-    // Stranger: visually different from both
+    var stranger = null;
     for (var j = 2; j < reranked.length; j++) {
-      if (!sharesVisual(mirror, reranked[j].pokemon) &&
-          !sharesVisual(shadow, reranked[j].pokemon)) {
-        stranger = reranked[j].pokemon;
-        break;
+      if (!sharesVisual(mirror, reranked[j].pokemon) && !sharesVisual(shadow, reranked[j].pokemon)) {
+        stranger = reranked[j].pokemon; break;
       }
     }
     if (!stranger) stranger = reranked[Math.min(3, reranked.length - 1)].pokemon;
-
     return [mirror, shadow, stranger];
   }
 
@@ -1678,22 +1695,183 @@ Poke_Mystery.engine = (function() {
     var score = 0;
     var shape = pokemon.shape || "";
     var color = pokemon.color || "";
-
     if (prefs.shape === "soft" && SHAPE_SOFT.indexOf(shape) !== -1) score += 1;
     if (prefs.shape === "sharp" && SHAPE_SHARP.indexOf(shape) !== -1) score += 1;
-
     if (prefs.color === "warm" && COLOR_WARM.indexOf(color) !== -1) score += 1;
     if (prefs.color === "cool" && COLOR_COOL.indexOf(color) !== -1) score += 1;
-
-    // Vibe: uses shape + color as proxy
     if (prefs.vibe === "cute" && (SHAPE_SOFT.indexOf(shape) !== -1 || COLOR_WARM.indexOf(color) !== -1)) score += 0.75;
     if (prefs.vibe === "cool" && (SHAPE_SHARP.indexOf(shape) !== -1 || COLOR_COOL.indexOf(color) !== -1)) score += 0.75;
     if (prefs.vibe === "weird" && (shape === "blob" || shape === "squiggle" || color === "purple" || color === "pink")) score += 0.75;
-
     return score;
   }
 
-  // --- Shiny roll ---
+  // --- Vector description ("You are...") ---
+
+  var AXIS_NAMES = ["reach", "tempo", "nature", "tether", "aura"];
+
+  var DESCRIPTORS = {
+    reach: {
+      pos: ["drawn to the vast", "pulled toward the cosmic", "eyes on the horizon", "at home in the infinite", "a quiet astronomer"],
+      neg: ["rooted in the familiar", "drawn to the near and the known", "a keeper of small things", "grounded, deliberate", "at home in the particular"]
+    },
+    tempo: {
+      pos: ["moving with patience", "still at the centre", "unhurried, deliberate", "a slow-burning fire", "patient as stone"],
+      neg: ["quick as a spark", "restless, alive", "moving before the thought forms", "born for the wind", "a live wire humming"]
+    },
+    nature: {
+      pos: ["shaped by structure", "drawn to the made and the measured", "a builder of systems", "at home in the blueprint", "thinking in frameworks"],
+      neg: ["wild as weather", "drawn to the raw and the real", "kin to soil and rain", "answering to instinct", "a creature of seasons"]
+    },
+    tether: {
+      pos: ["finding peace in solitude", "a private constellation", "standing apart, watching", "whole in the quiet", "drawn to empty spaces"],
+      neg: ["woven into others", "a thread in a larger cloth", "nurtured by the crowd", "finding meaning in belonging", "hands reaching out"]
+    },
+    aura: {
+      pos: ["a trickster's glint in the eye", "finding gravity in lightness", "a crooked smile", "serious about not being serious", "drawn to the strange and the silly"],
+      neg: ["carrying a quiet weight", "earnest to the bone", "dignified, deliberate, true", "a straight line in a crooked world", "finding gravity in sincerity"]
+    }
+  };
+
+  function describeVector(userVector) {
+    // Normalize accumulated vector to ~[-5,+5] range
+    // After 15 questions at ±3 per axis, typical max per axis is ~9-15
+    var normDivisor = 9;
+    var axes = [];
+    AXIS_NAMES.forEach(function(axis, i) {
+      axes.push({ axis: axis, value: userVector[i] / normDivisor, abs: Math.abs(userVector[i] / normDivisor) });
+    });
+
+    // Sort by absolute strength
+    axes.sort(function(a, b) { return b.abs - a.abs; });
+
+    // Take top 2-3 axes above threshold
+    var threshold = 1.5;
+    var strong = axes.filter(function(a) { return a.abs >= threshold; });
+    if (strong.length < 2) strong = axes.slice(0, 2); // always at least 2
+
+    // Build description from top 3
+    var parts = [];
+    var used = strong.slice(0, 3);
+    used.forEach(function(a) {
+      var pool = a.value > 0 ? DESCRIPTORS[a.axis].pos : DESCRIPTORS[a.axis].neg;
+      var phrase = pool[Math.floor(Math.random() * pool.length)];
+      parts.push(phrase);
+    });
+
+    if (parts.length === 0) return "Somewhere between the known and the unknown.";
+
+    return "You are " + parts.slice(0, parts.length - 1).join(", ") + ", and " + parts[parts.length - 1] + ".";
+  }
+
+  // --- Arrival phrases for trio cards ---
+  // Third-person narrator describing how each Pokémon appears.
+  // Gated by the Pokémon's strongest axis coordinate.
+
+  var PHRASES = {
+    0: [ // closest match
+      { axis: "reach", dir: 1, min: 2, text: "Arrived as if it already knew the way." },
+      { axis: "reach", dir: 1, min: 2, text: "From somewhere beyond. But here now." },
+      { axis: "reach", dir: -1, min: 2, text: "Was already nearby. Just had to look up." },
+      { axis: "reach", dir: -1, min: 2, text: "Never left. Just waited to be seen." },
+      { axis: "tempo", dir: 1, min: 2, text: "Took its time. Arrived exactly when it meant to." },
+      { axis: "tempo", dir: 1, min: 2, text: "Slow, certain. No need to rush." },
+      { axis: "tempo", dir: -1, min: 2, text: "Arrived before the question finished." },
+      { axis: "tempo", dir: -1, min: 2, text: "Quick. Like it was already running." },
+      { axis: "nature", dir: 1, min: 2, text: "Stepped out of something precise. A mechanism, maybe." },
+      { axis: "nature", dir: 1, min: 2, text: "Calculated. But not cold. Just exact." },
+      { axis: "nature", dir: -1, min: 2, text: "Came through the undergrowth. Quiet as moss." },
+      { axis: "nature", dir: -1, min: 2, text: "Wild and unbothered. Like weather." },
+      { axis: "tether", dir: 1, min: 2, text: "Alone, but not lonely. Just solitary by nature." },
+      { axis: "tether", dir: 1, min: 2, text: "From the edges. Where the crowd thins out." },
+      { axis: "tether", dir: -1, min: 2, text: "Brought company. Even alone, it brought company." },
+      { axis: "tether", dir: -1, min: 2, text: "Reached out before it was fully here." },
+      { axis: "aura", dir: 1, min: 2, text: "Smiling. Or something close to it." },
+      { axis: "aura", dir: 1, min: 2, text: "Tripped on the way in. Meant to?" },
+      { axis: "aura", dir: -1, min: 2, text: "Solemn. Straight-backed. Here for something true." },
+      { axis: "aura", dir: -1, min: 2, text: "Carrying a quiet gravity. Not heavy. Just real." }
+    ],
+    1: [ // contrast
+      { axis: "reach", dir: 1, min: 2, text: "Circled twice before landing." },
+      { axis: "reach", dir: 1, min: 2, text: "From the same sky, but a different star." },
+      { axis: "reach", dir: -1, min: 2, text: "Same ground. Different path across it." },
+      { axis: "reach", dir: -1, min: 2, text: "A neighbour you never noticed." },
+      { axis: "tempo", dir: 1, min: 2, text: "Waited for the first to settle. Then followed." },
+      { axis: "tempo", dir: 1, min: 2, text: "Behind by a beat. Deliberately." },
+      { axis: "tempo", dir: -1, min: 2, text: "Came in on the tailwind. A little breathless." },
+      { axis: "tempo", dir: -1, min: 2, text: "Darted in after the first. Racing, or dancing." },
+      { axis: "nature", dir: 1, min: 2, text: "Different blueprints. Same foundations." },
+      { axis: "nature", dir: 1, min: 2, text: "Made of the same stuff, assembled differently." },
+      { axis: "nature", dir: -1, min: 2, text: "A different season. Same forest." },
+      { axis: "nature", dir: -1, min: 2, text: "From downstream. Carried the same current." },
+      { axis: "tether", dir: 1, min: 2, text: "Watching from a little further out. Curious." },
+      { axis: "tether", dir: 1, min: 2, text: "Keeping its own distance. But still here." },
+      { axis: "tether", dir: -1, min: 2, text: "Came looking for the first. Found you instead." },
+      { axis: "tether", dir: -1, min: 2, text: "Brought someone with it. Couldn't help it." },
+      { axis: "aura", dir: 1, min: 2, text: "Slipped through a side door. Grinning." },
+      { axis: "aura", dir: 1, min: 2, text: "Humming. Or laughing. Hard to tell." },
+      { axis: "aura", dir: -1, min: 2, text: "Followed the first with a nod. Understanding." },
+      { axis: "aura", dir: -1, min: 2, text: "Serious, but warm. Like it knew why it was here." }
+    ],
+    2: [ // wildcard
+      { axis: "reach", dir: 1, min: 2, text: "Drifted in from the periphery." },
+      { axis: "reach", dir: 1, min: 2, text: "From a long way off. Took the scenic route." },
+      { axis: "reach", dir: -1, min: 2, text: "Stumbled in, looked around, stayed." },
+      { axis: "reach", dir: -1, min: 2, text: "Close to home. But not quite the same street." },
+      { axis: "tempo", dir: 1, min: 2, text: "The last to arrive. Unbothered by that." },
+      { axis: "tempo", dir: 1, min: 2, text: "Sauntered in. No hurry. No apology." },
+      { axis: "tempo", dir: -1, min: 2, text: "Late. Or early. Hard to tell with this one." },
+      { axis: "tempo", dir: -1, min: 2, text: "Burst through. Didn't knock." },
+      { axis: "nature", dir: 1, min: 2, text: "Materialized from something orderly. Then broke formation." },
+      { axis: "nature", dir: 1, min: 2, text: "An anomaly in the data set. Here anyway." },
+      { axis: "nature", dir: -1, min: 2, text: "Came through the walls. Metaphorically. Probably." },
+      { axis: "nature", dir: -1, min: 2, text: "A wildcard. Doesn't follow the rules of the clearing." },
+      { axis: "tether", dir: 1, min: 2, text: "Keeps to itself. But it's curious about you." },
+      { axis: "tether", dir: 1, min: 2, text: "From further out than the rest. Still listening." },
+      { axis: "tether", dir: -1, min: 2, text: "Invited itself. Brought snacks." },
+      { axis: "tether", dir: -1, min: 2, text: "Tagged along with the second. Nobody minded." },
+      { axis: "aura", dir: 1, min: 2, text: "Tripped over the briefcase. Played it off." },
+      { axis: "aura", dir: 1, min: 2, text: "Giggling in the corner. At what?" },
+      { axis: "aura", dir: -1, min: 2, text: "Arrived with purpose. Didn't say what." },
+      { axis: "aura", dir: -1, min: 2, text: "Stoic. Still. Watching you back." }
+    ]
+  };
+
+  function phraseForRole(pokemon, roleIdx) {
+    var pool = PHRASES[roleIdx] || PHRASES[0];
+
+    // Find the Pokémon's strongest axis
+    var axes = AXIS_NAMES.map(function(axis, i) {
+      return { axis: axis, value: pokemon.coords[i], abs: Math.abs(pokemon.coords[i]) };
+    });
+    axes.sort(function(a, b) { return b.abs - a.abs; });
+
+    // Try the strongest axis first, then fall back to weaker ones
+    for (var ai = 0; ai < axes.length; ai++) {
+      var a = axes[ai];
+      var dir = a.value > 0 ? 1 : -1;
+
+      var matches = pool.filter(function(p) {
+        return p.axis === a.axis && p.dir === dir && a.abs >= (p.min || 0);
+      });
+
+      if (matches.length > 0) {
+        return matches[Math.floor(Math.random() * matches.length)].text;
+      }
+    }
+
+    // Fallback — pick any phrase
+    var any = pool[Math.floor(Math.random() * pool.length)];
+    return any.text;
+  }
+
+  // --- Shiny picker for trio ---
+  // Exactly one of the three cards shows shiny. Returns index 0, 1, or 2.
+
+  function shinyWhich() {
+    return Math.floor(Math.random() * 3);
+  }
+
+  // --- Personal shiny roll (on chosen Pokémon) ---
 
   function shinyRoll() {
     return Math.floor(Math.random() * SHINY_ODDS) === 0;
@@ -1706,6 +1884,9 @@ Poke_Mystery.engine = (function() {
     accumulate: accumulate,
     nearestNeighbors: nearestNeighbors,
     selectTrio: selectTrio,
+    describeVector: describeVector,
+    phraseForRole: phraseForRole,
+    shinyWhich: shinyWhich,
     shinyRoll: shinyRoll
   };
 
@@ -1727,13 +1908,14 @@ Poke_Mystery.environment = (function() {
   function update(vector) {
     if (!body) return;
 
-    // Map each axis to hue/saturation shifts
-    // Reach: green (Humble=earthy green, Cosmic=deep indigo)
-    var r = Math.max(-5, Math.min(5, vector[0]));
-    var t = Math.max(-5, Math.min(5, vector[1]));
-    var n = Math.max(-5, Math.min(5, vector[2]));
-    var th = Math.max(-5, Math.min(5, vector[3]));
-    var a = Math.max(-5, Math.min(5, vector[4]));
+    // Normalize accumulated vector to ~[-5,+5] range.
+    // After 15 questions at ±3 per axis, typical max per axis is ~9-15.
+    var normDiv = 9;
+    var r = vector[0] / normDiv;
+    var t = vector[1] / normDiv;
+    var n = vector[2] / normDiv;
+    var th = vector[3] / normDiv;
+    var a = vector[4] / normDiv;
 
     // Base hue shifts
     var hueReach = 100 + r * 12;     // Humble=green(100), Cosmic=blue(160)
@@ -1904,9 +2086,33 @@ Poke_Mystery.ui = (function() {
     }, 1800);
   }
 
+  // --- "You are..." screen ---
+
+  function showYouAre(text, onComplete) {
+    clear(container);
+    var screen = el("div", "screen you-are-screen");
+
+    var label = el("div", "you-are-label", "The briefcase stirs...");
+    var body = el("div", "you-are-text", text);
+
+    screen.appendChild(label);
+    screen.appendChild(body);
+
+    screen.addEventListener("click", function() {
+      onComplete();
+    });
+
+    // Auto-advance after a generous read time
+    setTimeout(function() {
+      onComplete();
+    }, 6000);
+
+    container.appendChild(screen);
+  }
+
   // --- Trio reveal ---
 
-  function showTrio(trio, onChoose) {
+  function showTrio(trio, phrases, shinyIndex, onChoose) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -1917,20 +2123,30 @@ Poke_Mystery.ui = (function() {
 
     var cards = el("div", "trio-cards");
 
-    trio.forEach(function(pokemon, i) {
-      var card = el("div", "pokemon-card card-" + (i + 1));
+    // Layout: mirror(0)=center, shadow(1)=left, stranger(2)=right
+    var order = [1, 0, 2]; // shadow, mirror, stranger
+    var positions = ["trio-left", "trio-center", "trio-right"];
+
+    order.forEach(function(origIdx, displayIdx) {
+      var pokemon = trio[origIdx];
+      var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
+      var isShinyCard = (origIdx === shinyIndex);
+
+      var card = el("div", "pokemon-card " + positions[displayIdx]);
 
       var img = el("img", "card-artwork");
-      img.src = pokemon.artwork_url || "";
+      img.src = isShinyCard ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
       img.alt = pokemon.name;
       img.loading = "lazy";
 
       var name = el("div", "card-name", capitalise(pokemon.name));
       var genus = el("div", "card-genus", pokemon.genus || "");
+      var phraseDiv = el("div", "card-phrase", phrase);
 
       card.appendChild(img);
       card.appendChild(name);
       card.appendChild(genus);
+      card.appendChild(phraseDiv);
 
       card.addEventListener("click", function() {
         onChoose(pokemon);
@@ -2027,6 +2243,7 @@ Poke_Mystery.ui = (function() {
     showIntro: showIntro,
     showQuestion: showQuestion,
     showAestheticQuestion: showAestheticQuestion,
+    showYouAre: showYouAre,
     showBriefcase: showBriefcase,
     showTrio: showTrio,
     showShinyRoll: showShinyRoll,
@@ -2043,14 +2260,16 @@ Poke_Mystery.ui = (function() {
 Poke_Mystery.main = (function() {
 
   // --- Toggles ---
-  var AESTHETIC_PROBE_ENABLED = true;
+  var AESTHETIC_PROBE_ENABLED = false;
 
   var state = {
-    phase: "intro",           // intro | quiz | aesthetic | briefcase | trio | chosen
+    phase: "intro",           // intro | quiz | youare | briefcase | trio | chosen
     currentQuestionIndex: 0,
     userVector: [0, 0, 0, 0, 0],
     activeQuestions: [],
     trio: [],
+    trioPhrases: [],           // arrival phrases for each trio card
+    shinyIndex: 0,             // which trio card shows shiny (0, 1, or 2)
     chosenPokemon: null,
     isShiny: false,
     aestheticPrefs: {}         // accumulated from aesthetic probe
@@ -2080,6 +2299,8 @@ Poke_Mystery.main = (function() {
     state.userVector = [0, 0, 0, 0, 0];
     state.activeQuestions = engine.sampleQuestions(Poke_Mystery.questions, 15);
     state.trio = [];
+    state.trioPhrases = [];
+    state.shinyIndex = 0;
     state.chosenPokemon = null;
     state.isShiny = false;
     state.aestheticPrefs = {};
@@ -2155,13 +2376,33 @@ Poke_Mystery.main = (function() {
   function computeAndReveal() {
     if (pokemonData.length === 0) {
       state.trio = [sampleFallbackPokemon()];
-      showTrio();
+      state.trioPhrases = [""];
+      state.shinyIndex = 0;
+      showBriefcase();
       return;
     }
 
     var hasPrefs = state.aestheticPrefs && (state.aestheticPrefs.shape || state.aestheticPrefs.color || state.aestheticPrefs.vibe);
     state.trio = engine.selectTrio(state.userVector, pokemonData, hasPrefs ? state.aestheticPrefs : null);
-    showBriefcase();
+
+    // Generate arrival phrases for each role
+    state.trioPhrases = state.trio.map(function(p, i) {
+      return engine.phraseForRole(p, i);
+    });
+
+    // Pick which card gets the shiny
+    state.shinyIndex = engine.shinyWhich();
+
+    // Show "You are..." screen before the briefcase
+    showYouAreScreen();
+  }
+
+  function showYouAreScreen() {
+    state.phase = "youare";
+    var description = engine.describeVector(state.userVector);
+    ui.showYouAre(description, function() {
+      showBriefcase();
+    });
   }
 
   function showBriefcase() {
@@ -2173,7 +2414,7 @@ Poke_Mystery.main = (function() {
 
   function showTrio() {
     state.phase = "trio";
-    ui.showTrio(state.trio, function(pokemon) {
+    ui.showTrio(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
       choosePokemon(pokemon);
     });
   }

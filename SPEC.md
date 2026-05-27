@@ -270,20 +270,61 @@ Answers post-filter the trio without touching the 5D vector:
 
 Toggle: `AESTHETIC_PROBE_ENABLED` in main.js.
 
-### Shiny Roll
+### Shiny Roll (Personal, on chosen Pokémon)
 
 ```
-function shinyRoll(selectedPokemon):
+function shinyRoll():
     roll = Math.floor(Math.random() * 10)  // 0..9
     if roll === 0:                          // 1-in-10
-        return { isShiny: true, artwork: selectedPokemon.artwork_shiny_url }
+        return true
     else:
-        return { isShiny: false, artwork: selectedPokemon.artwork_url }
+        return false
 ```
 
-A twinkling star (★) appears next to the Pokémon name on a successful shiny roll.
-The shiny roll fires ONCE, at the moment the user selects their starter from the trio.
-It does not pre-roll or show odds. The magic is in not knowing until you choose.
+Fires ONCE when the user selects their starter from the trio. If successful, the
+chosen Pokémon's artwork swaps to `artwork_shiny_url`, a star (★) twinkles next to
+the name, and a gold radial flash animates.
+
+### Trio Shiny Card (One-of-three)
+
+```
+function shinyWhich():
+    return Math.floor(Math.random() * 3)  // 0, 1, or 2
+```
+
+Before the trio is revealed, one of the three cards is randomly selected to
+display its shiny artwork. This is independent of the personal shiny roll on
+the chosen Pokémon. The shiny card entices consideration of a Pokémon the user
+might not otherwise pick.
+
+### Vector Description ("You are...")
+
+```
+function describeVector(userVector):
+    // Normalize accumulated vector by dividing by 9 (~typical max per axis)
+    // Find top 2-3 axes with |value| >= 1.5
+    // Compose sentence from DESCRIPTORS pool
+```
+
+After the quiz, before the briefcase opens, a "You are..." screen appears showing
+a one-sentence vector description. Built from the 2-3 strongest axes, pulling
+randomly from pools of 5 phrases per axis-direction pair (50 phrases total).
+
+### Arrival Phrase System
+
+```
+function phraseForRole(pokemon, roleIdx):
+    // Find Pokémon's strongest axis coordinate
+    // Filter PHRASES[roleIdx] by axis, direction (+/-), and minimum threshold
+    // Return random matching phrase
+```
+
+Each trio card displays a short third-person arrival phrase under the Pokémon
+genus. Phrases are gated by the Pokémon's strongest 5D axis coordinate. Three
+pools of 20 phrases each (60 total), one per role (closest/contrast/wildcard).
+
+Phrases use the Pokémon's perspective indirectly: "Arrived as if it already knew
+the way", "Came through the undergrowth. Quiet as moss.", etc.
 
 ---
 
@@ -294,26 +335,24 @@ All runtime state lives in `Poke_Mystery.state`:
 ```js
 state = {
   // Quiz state
-  phase: 'intro' | 'quiz' | 'briefcase' | 'trio' | 'chosen',
+  phase: 'intro' | 'quiz' | 'youare' | 'briefcase' | 'trio' | 'chosen',
   currentQuestionIndex: 0,
   userVector: [0, 0, 0, 0, 0],
   answeredQuestions: [],       // question IDs answered (to avoid repeats)
 
   // Question pool
-  questionPool: [],            // all 60 questions
+  questionPool: [],            // all 120 questions
   activeQuestions: [],         // the 15 sampled for this session
 
   // Results
-  trio: [],                    // 3 nearest Pokémon { id, name, genus, coords, artwork_url, ... }
+  trio: [],                    // 3 diversified Pokémon
+  trioPhrases: [],             // arrival phrases for each card
+  shinyIndex: 0,               // which card shows shiny artwork (0-2)
   chosenPokemon: null,         // the one the user picked
   isShiny: false,
 
-  // Environment
-  environment: {               // current background state
-    palette: 'grassland',     // css class or canvas state key
-    targetPalette: 'grassland',
-    transitionProgress: 0,
-  }
+  // Aesthetic (toggled off by default)
+  aestheticPrefs: {}           // accumulated from aesthetic probe
 }
 ```
 
