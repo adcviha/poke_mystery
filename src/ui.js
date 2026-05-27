@@ -132,14 +132,17 @@ Poke_Mystery.ui = (function() {
     screen.appendChild(label);
     screen.appendChild(body);
 
-    screen.addEventListener("click", function() {
+    var done = false;
+    function advance() {
+      if (done) return;
+      done = true;
       onComplete();
-    });
+    }
+
+    screen.addEventListener("click", advance);
 
     // Auto-advance after a generous read time
-    setTimeout(function() {
-      onComplete();
-    }, 6000);
+    setTimeout(advance, 6000);
 
     container.appendChild(screen);
   }
@@ -173,12 +176,19 @@ Poke_Mystery.ui = (function() {
       img.alt = pokemon.name;
       img.loading = "lazy";
 
-      var name = el("div", "card-name", capitalise(pokemon.name));
+      var nameWrap = el("div", "card-name-wrap");
+      var name = el("span", "card-name", capitalise(pokemon.name));
+      nameWrap.appendChild(name);
+      if (isShinyCard) {
+        var star = el("span", "card-shiny-star", "★");
+        nameWrap.appendChild(star);
+      }
+
       var genus = el("div", "card-genus", pokemon.genus || "");
       var phraseDiv = el("div", "card-phrase", phrase);
 
       card.appendChild(img);
-      card.appendChild(name);
+      card.appendChild(nameWrap);
       card.appendChild(genus);
       card.appendChild(phraseDiv);
 

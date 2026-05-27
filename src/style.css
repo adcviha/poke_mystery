@@ -247,10 +247,22 @@ body {
   object-fit: contain;
 }
 
+.card-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 .card-name {
   font-size: 1rem;
   font-weight: bold;
   color: #444;
+}
+
+.card-shiny-star {
+  font-size: 0.85rem;
+  color: #c9a84c;
+  line-height: 1;
 }
 
 .card-genus {
