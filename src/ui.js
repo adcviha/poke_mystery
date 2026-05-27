@@ -203,6 +203,93 @@ Poke_Mystery.ui = (function() {
     screen.appendChild(wrapper);
   }
 
+  // --- Pokéball confirmation ---
+
+  var ROLE_LABELS = ["your mirror", "your shadow", "your stranger"];
+
+  function showPokeballConfirm(initialPick, trio, phrases, shinyIndex, onConfirm) {
+    var screen = document.querySelector(".briefcase-screen");
+    if (!screen) return;
+    clear(screen);
+
+    var wrapper = el("div", "confirm-wrapper");
+
+    var title = el("div", "confirm-title", "Your choice is...");
+    wrapper.appendChild(title);
+
+    var ballsRow = el("div", "confirm-balls");
+
+    // Layout: shadow(1)=left, mirror(0)=center, stranger(2)=right
+    var order = [1, 0, 2];
+    var chosenIdx = -1;
+    for (var i = 0; i < 3; i++) {
+      if (trio[order[i]] === initialPick) { chosenIdx = i; break; }
+    }
+
+    var selectedDisplayIdx = chosenIdx;
+
+    function renderBalls(selectedIdx) {
+      clear(ballsRow);
+
+      order.forEach(function(origIdx, displayIdx) {
+        var pokemon = trio[origIdx];
+        var isSelected = (displayIdx === selectedIdx);
+        var isShinyBall = (origIdx === shinyIndex);
+
+        var ballWrap = el("div", "pokeball-wrap" + (isSelected ? " selected" : ""));
+
+        // Pokéball
+        var ball = el("div", "pokeball" + (isShinyBall ? " shiny-ball" : ""));
+        var ballTop = el("div", "pokeball-top");
+        var ballBottom = el("div", "pokeball-bottom");
+        var ballBand = el("div", "pokeball-band");
+        var ballBtn = el("div", "pokeball-btn");
+        ballBand.appendChild(ballBtn);
+        ball.appendChild(ballTop);
+        ball.appendChild(ballBottom);
+        ball.appendChild(ballBand);
+
+        // Pokémon peeking out when selected
+        if (isSelected) {
+          var peek = el("img", "pokeball-peek");
+          peek.src = isShinyBall ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
+          peek.alt = pokemon.name;
+          ballWrap.appendChild(peek);
+          ball.classList.add("open");
+        }
+
+        ballWrap.appendChild(ball);
+
+        // Role label
+        var label = el("div", "pokeball-label", ROLE_LABELS[origIdx]);
+        ballWrap.appendChild(label);
+
+        // Confirm prompt on selected
+        if (isSelected) {
+          var prompt = el("div", "pokeball-confirm", "Click again to choose");
+          ballWrap.appendChild(prompt);
+        }
+
+        ballWrap.addEventListener("click", function() {
+          if (isSelected) {
+            // Confirm this choice
+            onConfirm(pokemon);
+          } else {
+            // Switch selection
+            renderBalls(displayIdx);
+          }
+        });
+
+        ballsRow.appendChild(ballWrap);
+      });
+    }
+
+    renderBalls(selectedDisplayIdx);
+
+    wrapper.appendChild(ballsRow);
+    screen.appendChild(wrapper);
+  }
+
   // --- Shiny reveal ---
 
   function showShinyRoll(pokemon, isShiny, onContinue) {
@@ -285,6 +372,7 @@ Poke_Mystery.ui = (function() {
     showYouAre: showYouAre,
     showBriefcase: showBriefcase,
     showTrio: showTrio,
+    showPokeballConfirm: showPokeballConfirm,
     showShinyRoll: showShinyRoll,
     updateEnvironment: updateEnvironment
   };

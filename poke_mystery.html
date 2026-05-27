@@ -37,7 +37,16 @@ body {
   transition: background 4s ease;
 }
 
+.env-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 #app {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 640px;
   display: flex;
@@ -411,6 +420,139 @@ body {
   line-height: 1.4;
   margin-top: 0.25rem;
   max-width: 140px;
+}
+
+/* --- Pokéball confirmation --- */
+
+.confirm-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  animation: fadeIn 0.6s ease;
+}
+
+.confirm-title {
+  font-size: 1.1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.confirm-balls {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.pokeball-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.25s;
+}
+
+.pokeball-wrap:hover {
+  transform: translateY(-3px);
+}
+
+.pokeball-wrap.selected {
+  transform: translateY(-6px);
+}
+
+.pokeball {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transition: box-shadow 0.3s;
+}
+
+.pokeball-wrap.selected .pokeball {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+}
+
+.pokeball-top {
+  position: absolute;
+  inset: 0 0 50% 0;
+  background: linear-gradient(180deg, #e85d5d 0%, #c94444 100%);
+}
+
+.pokeball-bottom {
+  position: absolute;
+  inset: 50% 0 0 0;
+  background: linear-gradient(180deg, #f0f0f0 0%, #dadada 100%);
+}
+
+.pokeball-band {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pokeball-band::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #3a3a3a;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pokeball-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: 3px solid #3a3a3a;
+  position: relative;
+  z-index: 1;
+  transition: background 0.3s;
+}
+
+.pokeball-wrap.selected .pokeball-btn {
+  background: #ffd700;
+}
+
+.shiny-ball .pokeball-top {
+  background: linear-gradient(180deg, #f0c060 0%, #c9a84c 100%);
+}
+
+.pokeball-peek {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  animation: peekUp 0.5s ease;
+}
+
+@keyframes peekUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pokeball-label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  color: #999;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pokeball-confirm {
+  font-size: 0.7rem;
+  color: #b8860b;
+  font-style: italic;
+  animation: gentlePulse 1.5s ease-in-out infinite;
 }
 
 .aesthetic-screen {
@@ -1914,22 +2056,96 @@ Poke_Mystery.engine = (function() {
 
 // ===== environment.js =====
 // ===== Poké_Mystery Environment Shifter =====
-// Subtle background color transitions based on accumulated 5D vector.
+// CSS gradient background + canvas ink-drop overlay.
+// Each answer spawns an expanding coloured drop that swirls and fades.
 // Attaches to window.Poke_Mystery.
 
 Poke_Mystery.environment = (function() {
 
-  var body;
+  var body, canvas, ctx;
+  var drops = [];
+  var animId;
+
+  // --- Init ---
 
   function init() {
     body = document.body;
+
+    // Canvas overlay for ink drops
+    canvas = document.createElement("canvas");
+    canvas.className = "env-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    body.appendChild(canvas);
+
+    ctx = canvas.getContext("2d");
+    sizeCanvas();
+    window.addEventListener("resize", sizeCanvas);
+
+    animId = requestAnimationFrame(tick);
   }
+
+  function sizeCanvas() {
+    if (!canvas) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  // --- Animation loop ---
+
+  function tick() {
+    if (!ctx) return;
+
+    // Fade existing drops — draw a near-transparent white veil over the whole canvas.
+    // Over many frames this creates a soft ghost trail as old drops dissolve.
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "rgba(255,255,255,0.012)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw drops with additive blending
+    ctx.globalCompositeOperation = "lighter";
+
+    for (var i = drops.length - 1; i >= 0; i--) {
+      var d = drops[i];
+      d.age++;
+
+      // Expand radius, fade alpha
+      var progress = d.age / d.lifespan;
+      d.radius = d.startRadius + (d.maxRadius - d.startRadius) * progress;
+      d.alpha = d.startAlpha * (1 - progress);
+
+      if (d.alpha <= 0.005) {
+        drops.splice(i, 1);
+        continue;
+      }
+
+      // Sine-wave drift for organic swirling
+      var driftX = Math.sin(d.age * 0.02 + d.phase) * 0.3;
+      var driftY = Math.cos(d.age * 0.025 + d.phase) * 0.3;
+      d.x += driftX;
+      d.y += driftY;
+
+      // Radial gradient: hard center, soft edge — like an ink drop
+      var grad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
+      var c = "hsla(" + d.hue + ", " + d.sat + "%, " + d.light + "%, " + d.alpha.toFixed(3) + ")";
+      grad.addColorStop(0, c);
+      grad.addColorStop(0.3, c);
+      grad.addColorStop(1, "transparent");
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    animId = requestAnimationFrame(tick);
+  }
+
+  // --- Spawn a drop from the current vector ---
 
   function update(vector) {
     if (!body) return;
 
-    // Normalize accumulated vector to ~[-5,+5] range.
-    // After 15 questions at ±3 per axis, typical max per axis is ~9-15.
+    // Normalize accumulated vector
     var normDiv = 3;
     var r = vector[0] / normDiv;
     var t = vector[1] / normDiv;
@@ -1937,21 +2153,14 @@ Poke_Mystery.environment = (function() {
     var th = vector[3] / normDiv;
     var a = vector[4] / normDiv;
 
-    // Base hue shifts
-    var hueReach = 100 + r * 12;     // Humble=green(100), Cosmic=blue(160)
-    var hueTempo = 200 - t * 15;      // Mercurial=red(0), Stoic=blue(200)
-    var natureSat = 0.4 + n * 0.06;   // Wild=low sat organic, Wrought=high sat synthetic
-    var tetherWarmth = 0.5 - th * 0.05; // Kith=warm, Kinless=cool
-    var auraBrightness = 0.85 + a * 0.03; // Earnest=subdued, Capricious=bright
+    // Hue/saturation/lightness from the 5D vector
+    var hueReach = 100 + r * 12;
+    var hueTempo = 200 - t * 15;
+    var natureSat = 0.4 + n * 0.06;
+    var tetherWarmth = 0.5 - th * 0.05;
+    var auraBrightness = 0.85 + a * 0.03;
 
-    // Blend into CSS custom properties
-    body.style.setProperty("--env-hue", Math.round(hueReach));
-    body.style.setProperty("--env-tempo-hue", Math.round(hueTempo));
-    body.style.setProperty("--env-saturation", natureSat.toFixed(2));
-    body.style.setProperty("--env-warmth", tetherWarmth.toFixed(2));
-    body.style.setProperty("--env-brightness", auraBrightness.toFixed(2));
-
-    // Composite background gradient
+    // Composite background gradient (unchanged)
     var hue1 = Math.round((hueReach + hueTempo) / 2);
     var hue2 = Math.round(hueReach);
     var sat = Math.round(natureSat * 100);
@@ -1962,18 +2171,43 @@ Poke_Mystery.environment = (function() {
       + "hsl(" + hue2 + ", " + sat + "%, " + light + "%) 100%)";
 
     body.style.background = grad;
+
+    // Spawn an ink drop from the blended hue
+    spawnDrop(hue1, sat, Math.round(light + 5));
   }
 
-  // Reset to default
-  function reset() {
-    if (!body) return;
-    body.style.background = "";
-    body.style.setProperty("--env-hue", "120");
-    body.style.setProperty("--env-tempo-hue", "200");
-    body.style.setProperty("--env-saturation", "0.4");
-    body.style.setProperty("--env-warmth", "0.5");
-    body.style.setProperty("--env-brightness", "0.85");
+  function spawnDrop(hue, sat, light) {
+    if (!canvas) return;
+    drops.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      hue: hue,
+      sat: sat,
+      light: light,
+      startRadius: 5 + Math.random() * 15,
+      maxRadius: 120 + Math.random() * 200,
+      startAlpha: 0.15 + Math.random() * 0.2,
+      alpha: 0,
+      age: 0,
+      lifespan: 400 + Math.random() * 400, // frames (~7-13 sec at 60fps)
+      phase: Math.random() * Math.PI * 2
+    });
   }
+
+  // --- Reset ---
+
+  function reset() {
+    drops = [];
+    if (ctx && canvas) {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    if (body) {
+      body.style.background = "";
+    }
+  }
+
+  // --- Public API ---
 
   return {
     init: init,
@@ -2189,6 +2423,93 @@ Poke_Mystery.ui = (function() {
     screen.appendChild(wrapper);
   }
 
+  // --- Pokéball confirmation ---
+
+  var ROLE_LABELS = ["your mirror", "your shadow", "your stranger"];
+
+  function showPokeballConfirm(initialPick, trio, phrases, shinyIndex, onConfirm) {
+    var screen = document.querySelector(".briefcase-screen");
+    if (!screen) return;
+    clear(screen);
+
+    var wrapper = el("div", "confirm-wrapper");
+
+    var title = el("div", "confirm-title", "Your choice is...");
+    wrapper.appendChild(title);
+
+    var ballsRow = el("div", "confirm-balls");
+
+    // Layout: shadow(1)=left, mirror(0)=center, stranger(2)=right
+    var order = [1, 0, 2];
+    var chosenIdx = -1;
+    for (var i = 0; i < 3; i++) {
+      if (trio[order[i]] === initialPick) { chosenIdx = i; break; }
+    }
+
+    var selectedDisplayIdx = chosenIdx;
+
+    function renderBalls(selectedIdx) {
+      clear(ballsRow);
+
+      order.forEach(function(origIdx, displayIdx) {
+        var pokemon = trio[origIdx];
+        var isSelected = (displayIdx === selectedIdx);
+        var isShinyBall = (origIdx === shinyIndex);
+
+        var ballWrap = el("div", "pokeball-wrap" + (isSelected ? " selected" : ""));
+
+        // Pokéball
+        var ball = el("div", "pokeball" + (isShinyBall ? " shiny-ball" : ""));
+        var ballTop = el("div", "pokeball-top");
+        var ballBottom = el("div", "pokeball-bottom");
+        var ballBand = el("div", "pokeball-band");
+        var ballBtn = el("div", "pokeball-btn");
+        ballBand.appendChild(ballBtn);
+        ball.appendChild(ballTop);
+        ball.appendChild(ballBottom);
+        ball.appendChild(ballBand);
+
+        // Pokémon peeking out when selected
+        if (isSelected) {
+          var peek = el("img", "pokeball-peek");
+          peek.src = isShinyBall ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
+          peek.alt = pokemon.name;
+          ballWrap.appendChild(peek);
+          ball.classList.add("open");
+        }
+
+        ballWrap.appendChild(ball);
+
+        // Role label
+        var label = el("div", "pokeball-label", ROLE_LABELS[origIdx]);
+        ballWrap.appendChild(label);
+
+        // Confirm prompt on selected
+        if (isSelected) {
+          var prompt = el("div", "pokeball-confirm", "Click again to choose");
+          ballWrap.appendChild(prompt);
+        }
+
+        ballWrap.addEventListener("click", function() {
+          if (isSelected) {
+            // Confirm this choice
+            onConfirm(pokemon);
+          } else {
+            // Switch selection
+            renderBalls(displayIdx);
+          }
+        });
+
+        ballsRow.appendChild(ballWrap);
+      });
+    }
+
+    renderBalls(selectedDisplayIdx);
+
+    wrapper.appendChild(ballsRow);
+    screen.appendChild(wrapper);
+  }
+
   // --- Shiny reveal ---
 
   function showShinyRoll(pokemon, isShiny, onContinue) {
@@ -2271,6 +2592,7 @@ Poke_Mystery.ui = (function() {
     showYouAre: showYouAre,
     showBriefcase: showBriefcase,
     showTrio: showTrio,
+    showPokeballConfirm: showPokeballConfirm,
     showShinyRoll: showShinyRoll,
     updateEnvironment: updateEnvironment
   };
@@ -2440,13 +2762,18 @@ Poke_Mystery.main = (function() {
   function showTrio() {
     state.phase = "trio";
     ui.showTrio(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
-      choosePokemon(pokemon);
+      ui.showPokeballConfirm(pokemon, state.trio, state.trioPhrases, state.shinyIndex, function(finalPick) {
+        choosePokemon(finalPick);
+      });
     });
   }
 
   function choosePokemon(pokemon) {
     state.chosenPokemon = pokemon;
-    state.isShiny = engine.shinyRoll();
+    // If they picked the shiny card from the trio, it's a guaranteed shiny.
+    // Otherwise roll the 1-in-10 personal shiny chance.
+    var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
+    state.isShiny = pickedShinyCard || engine.shinyRoll();
     state.phase = "chosen";
 
     ui.showShinyRoll(pokemon, state.isShiny, function() {
