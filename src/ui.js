@@ -210,7 +210,7 @@ Poke_Mystery.ui = (function() {
     return ball;
   }
 
-  function showPokeballReveal(trio, phrases, shinyIndex, onLockIn) {
+  function showPokeballReveal(trio, shinyIndex, onLockIn) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -229,7 +229,6 @@ Poke_Mystery.ui = (function() {
 
       order.forEach(function(origIdx, displayIdx) {
         var pokemon = trio[origIdx];
-        var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
         var ballType = ballTypes[displayIdx];
         var isOpen = (displayIdx === openedIndex);
         var isShinyCard = (origIdx === shinyIndex);
@@ -256,12 +255,10 @@ Poke_Mystery.ui = (function() {
           art.loading = "lazy";
 
           var nameEl = el("div", "ball-name", capitalise(pokemon.name) + (isShinyCard ? ' <span class="ball-star">&#9733;</span>' : ""));
-          var flavor = el("div", "ball-flavor", phrase);
           var prompt = el("div", "ball-prompt", "Click again to choose");
 
           wrap.appendChild(art);
           wrap.appendChild(nameEl);
-          wrap.appendChild(flavor);
           wrap.appendChild(prompt);
 
           wrap.addEventListener("click", function() {
@@ -280,7 +277,7 @@ Poke_Mystery.ui = (function() {
 
   // --- Shiny reveal ---
 
-  function showShinyRoll(pokemon, isShiny, onViewMap, onRestart) {
+  function showShinyRoll(pokemon, isShiny, phrase, onViewMap, onRestart) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -313,6 +310,11 @@ Poke_Mystery.ui = (function() {
     reveal.appendChild(nameWrap);
     reveal.appendChild(genusField);
 
+    if (phrase) {
+      var flavorEl = el("div", "shiny-flavor", phrase);
+      reveal.appendChild(flavorEl);
+    }
+
     var btnRow = el("div", "shiny-btns");
 
     var mapBtn = el("button", "btn-retry", "Something else…");
@@ -329,57 +331,89 @@ Poke_Mystery.ui = (function() {
 
   // --- Gallery star chart ---
 
-  var AXIS_LABELS = [
-    { name: "Reach",    neg: "Humble",    pos: "Cosmic" },
-    { name: "Tempo",    neg: "Mercurial", pos: "Stoic" },
-    { name: "Nature",   neg: "Wild",      pos: "Wrought" },
-    { name: "Tether",   neg: "Kith",      pos: "Kinless" },
-    { name: "Aura",     neg: "Earnest",   pos: "Capricious" }
-  ];
-
   var AXIS_PAIRS = [
-    { label: "Reach / Tempo",      x: 0, y: 1 },
-    { label: "Nature / Tether",    x: 2, y: 3 },
-    { label: "Aura / Reach",       x: 4, y: 0 },
-    { label: "Tempo / Nature",     x: 1, y: 2 },
-    { label: "Tether / Aura",      x: 3, y: 4 }
+    { x: 0, y: 1 },
+    { x: 2, y: 3 },
+    { x: 4, y: 0 },
+    { x: 1, y: 2 },
+    { x: 3, y: 4 }
   ];
 
-  function showGallery(userVector, trio, chosenPokemon, allPokemon, onRestart) {
-    var container = document.getElementById("app");
-    if (!container) return;
-    clear(container);
+  function showGallery(userVector, trio, chosenPokemon, allPokemon, onClose) {
+    var hue = Poke_Mystery.colors.AXIS_HUE;
 
-    var screen = el("div", "screen gallery-screen");
+    var overlay = el("div", "gallery-overlay");
     var canvas = el("canvas", "gallery-canvas");
     var ctx = canvas.getContext("2d");
 
     var currentPair = 0;
 
+    // Symbolic toggle buttons — colored circles
     var toggles = el("div", "gallery-toggles");
     AXIS_PAIRS.forEach(function(pair, i) {
-      var btn = el("button", "gallery-toggle" + (i === 0 ? " active" : ""), pair.label);
+      var btn = el("button", "gallery-symbtn" + (i === 0 ? " active" : ""));
+      var c1 = el("span", "gallery-symdot");
+      c1.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.x]] + ", 55%, 55%)";
+      var c2 = el("span", "gallery-symdot");
+      c2.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.y]] + ", 55%, 55%)";
+      btn.appendChild(c1);
+      btn.appendChild(c2);
       btn.addEventListener("click", function() {
         currentPair = i;
-        var allToggles = toggles.querySelectorAll(".gallery-toggle");
-        allToggles.forEach(function(t) { t.classList.remove("active"); });
+        var allBtns = toggles.querySelectorAll(".gallery-symbtn");
+        allBtns.forEach(function(t) { t.classList.remove("active"); });
         btn.classList.add("active");
         drawGallery(canvas, ctx, pair.x, pair.y, userVector, trio, chosenPokemon, allPokemon);
       });
       toggles.appendChild(btn);
     });
 
-    var restartBtn = el("button", "btn-retry gallery-restart", "Take the quiz again");
-    restartBtn.addEventListener("click", onRestart);
+    // Close button
+    var closeBtn = el("button", "gallery-close", "×");
+    closeBtn.addEventListener("click", onClose);
 
-    screen.appendChild(canvas);
-    screen.appendChild(toggles);
-    screen.appendChild(restartBtn);
-    container.appendChild(screen);
+    // Placeholder counters
+    var counters = el("div", "gallery-counters");
+    var stepsEl = el("span", "gallery-counter", "Steps: 0");
+    var ballsEl = el("span", "gallery-counter", "Balls: 0");
+    counters.appendChild(stepsEl);
+    counters.appendChild(ballsEl);
+
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(canvas);
+    overlay.appendChild(toggles);
+    overlay.appendChild(counters);
+    document.body.appendChild(overlay);
+
+    // Escape to close
+    function onKey(e) {
+      if (e.key === "Escape") { onClose(); }
+    }
+    document.addEventListener("keydown", onKey);
+
+    function cleanup() {
+      document.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", resize);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }
+
+    // Override onClose to clean up
+    var wrappedClose = function() {
+      cleanup();
+      onClose();
+    };
+    closeBtn.removeEventListener("click", onClose);
+    closeBtn.addEventListener("click", wrappedClose);
+    // Also update escape handler
+    document.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") wrappedClose();
+    });
+    window.addEventListener("resize", resize);
 
     function resize() {
-      var w = screen.clientWidth;
-      var h = Math.max(window.innerHeight * 0.55, 350);
+      var w = overlay.clientWidth;
+      var h = overlay.clientHeight;
       var dpr = window.devicePixelRatio || 1;
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
@@ -391,7 +425,6 @@ Poke_Mystery.ui = (function() {
         userVector, trio, chosenPokemon, allPokemon);
     }
 
-    window.addEventListener("resize", resize);
     resize();
   }
 
@@ -400,44 +433,17 @@ Poke_Mystery.ui = (function() {
     var H = canvas.height / (window.devicePixelRatio || 1);
     if (W <= 0 || H <= 0) return;
 
-    var pad = { top: 32, right: 28, bottom: 36, left: 36 };
-    var pw = W - pad.left - pad.right;
-    var ph = H - pad.top - pad.bottom;
-
-    // Coordinate range: [-5, +5] for both axes
-    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
-
-    function toX(val) { return pad.left + ((val - xMin) / (xMax - xMin)) * pw; }
-    function toY(val) { return pad.top + ((yMax - val) / (yMax - yMin)) * ph; }
-
     var colors = Poke_Mystery.colors;
 
-    // Background
-    ctx.fillStyle = "#0d1117";
+    // Dark void
+    ctx.fillStyle = "#080c12";
     ctx.fillRect(0, 0, W, H);
 
-    // Grid lines at axis zero-crossings
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(toX(0), pad.top);
-    ctx.lineTo(toX(0), pad.top + ph);
-    ctx.moveTo(pad.left, toY(0));
-    ctx.lineTo(pad.left + pw, toY(0));
-    ctx.stroke();
+    // Coordinate range
+    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
 
-    // Subtle grid at +/-2.5
-    ctx.strokeStyle = "rgba(255,255,255,0.03)";
-    [-2.5, 2.5].forEach(function(v) {
-      ctx.beginPath();
-      ctx.moveTo(toX(v), pad.top);
-      ctx.lineTo(toX(v), pad.top + ph);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(pad.left, toY(v));
-      ctx.lineTo(pad.left + pw, toY(v));
-      ctx.stroke();
-    });
+    function toX(val) { return ((val - xMin) / (xMax - xMin)) * W; }
+    function toY(val) { return ((yMax - val) / (yMax - yMin)) * H; }
 
     // All Pokemon dots
     var trioIds = trio ? trio.map(function(p) { return p.id; }) : [];
@@ -446,15 +452,14 @@ Poke_Mystery.ui = (function() {
     allPokemon.forEach(function(p) {
       var cx = toX(p.coords[xAxis]);
       var cy = toY(p.coords[yAxis]);
-      if (cx < pad.left - 2 || cx > pad.left + pw + 2) return;
-      if (cy < pad.top - 2 || cy > pad.top + ph + 2) return;
+      if (cx < -4 || cx > W + 4) return;
+      if (cy < -4 || cy > H + 4) return;
 
-      // Skip trio members — they get special rendering
       if (trioIds.indexOf(p.id) !== -1 || p.id === chosenId) return;
 
       ctx.fillStyle = colors.dotColor(p.coords);
       ctx.beginPath();
-      ctx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
       ctx.fill();
     });
 
@@ -464,13 +469,11 @@ Poke_Mystery.ui = (function() {
         var cx = toX(p.coords[xAxis]);
         var cy = toY(p.coords[yAxis]);
 
-        // Larger dot
         var isChosen = p.id === chosenId;
-        var size = isChosen ? 6 : 4.5;
-        var alpha = isChosen ? 0.9 : 0.7;
+        var size = isChosen ? 5 : 3.5;
+        var alpha = isChosen ? 0.9 : 0.65;
 
-        // Glow under the dot
-        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 3);
+        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 4);
         var hue = isChosen ? 45 : (colors.AXIS_HUE[colors.AXIS_ORDER[
           [0,1,2,3,4].sort(function(a,b){
             return Math.abs(p.coords[b]) - Math.abs(p.coords[a]);
@@ -480,16 +483,14 @@ Poke_Mystery.ui = (function() {
         glow.addColorStop(1, "hsla(" + hue + ", 60%, 60%, 0)");
         ctx.fillStyle = glow;
         ctx.beginPath();
-        ctx.arc(cx, cy, size * 3, 0, Math.PI * 2);
+        ctx.arc(cx, cy, size * 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Dot
         ctx.fillStyle = "hsla(" + hue + ", 50%, 55%, " + alpha + ")";
         ctx.beginPath();
         ctx.arc(cx, cy, size, 0, Math.PI * 2);
         ctx.fill();
 
-        // Ring for chosen
         if (isChosen) {
           ctx.strokeStyle = "hsla(45, 70%, 55%, 0.7)";
           ctx.lineWidth = 1.5;
@@ -497,12 +498,6 @@ Poke_Mystery.ui = (function() {
           ctx.arc(cx, cy, size + 5, 0, Math.PI * 2);
           ctx.stroke();
         }
-
-        // Name label
-        ctx.fillStyle = "rgba(220,220,220,0.75)";
-        ctx.font = "12px Georgia, serif";
-        ctx.textAlign = "center";
-        ctx.fillText(capitalise(p.name), cx, cy - size - 6);
       });
     }
 
@@ -510,56 +505,19 @@ Poke_Mystery.ui = (function() {
     var ux = toX(userVector[xAxis]);
     var uy = toY(userVector[yAxis]);
 
-    // Outer glow
-    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 18);
-    userGlow.addColorStop(0, "rgba(255,200,60,0.5)");
-    userGlow.addColorStop(0.5, "rgba(255,180,40,0.15)");
+    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 20);
+    userGlow.addColorStop(0, "rgba(255,200,60,0.45)");
+    userGlow.addColorStop(0.5, "rgba(255,180,40,0.12)");
     userGlow.addColorStop(1, "rgba(255,160,30,0)");
     ctx.fillStyle = userGlow;
     ctx.beginPath();
-    ctx.arc(ux, uy, 18, 0, Math.PI * 2);
+    ctx.arc(ux, uy, 20, 0, Math.PI * 2);
     ctx.fill();
 
-    // Inner dot
     ctx.fillStyle = "rgba(255,210,80,0.9)";
     ctx.beginPath();
-    ctx.arc(ux, uy, 5, 0, Math.PI * 2);
+    ctx.arc(ux, uy, 4, 0, Math.PI * 2);
     ctx.fill();
-
-    // Axis labels
-    var labelStyle = "11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-    ctx.fillStyle = "rgba(200,200,200,0.5)";
-    ctx.font = labelStyle;
-
-    // X-axis labels
-    var xAxisInfo = AXIS_LABELS[xAxis];
-    ctx.textAlign = "left";
-    ctx.fillText(xAxisInfo.neg, pad.left, pad.top + ph + 20);
-    ctx.textAlign = "right";
-    ctx.fillText(xAxisInfo.pos, pad.left + pw, pad.top + ph + 20);
-    ctx.textAlign = "center";
-    ctx.fillText(xAxisInfo.name, pad.left + pw / 2, pad.top + ph + 20);
-
-    // Y-axis labels
-    var yAxisInfo = AXIS_LABELS[yAxis];
-    ctx.save();
-    ctx.translate(pad.left - 18, pad.top + ph / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.neg, 0, 0);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(pad.left - 18, pad.top);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.pos, 0, 0);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(pad.left - 26, pad.top + ph / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.name, 0, 0);
-    ctx.restore();
   }
 
   function capitalise(s) {

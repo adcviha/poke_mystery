@@ -159,12 +159,14 @@ Poke_Mystery.main = (function() {
 
   function showPokeballReveal() {
     state.phase = "pokeballs";
-    ui.showPokeballReveal(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
+    ui.showPokeballReveal(state.trio, state.shinyIndex, function(pokemon) {
       state.chosenPokemon = pokemon;
       var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
       state.isShiny = pickedShinyCard || engine.shinyRoll();
       state.phase = "chosen";
-      ui.showShinyRoll(pokemon, state.isShiny, function() {
+      var chosenIdx = state.trio.indexOf(pokemon);
+      var chosenPhrase = (state.trioPhrases && chosenIdx >= 0) ? state.trioPhrases[chosenIdx] : "";
+      ui.showShinyRoll(pokemon, state.isShiny, chosenPhrase, function() {
         showGallery();
       }, function() {
         startQuiz();

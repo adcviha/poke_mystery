@@ -37,6 +37,21 @@ body {
   transition: background 4s ease;
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 65%);
+  animation: bg-breathe 14s ease-in-out infinite;
+}
+
+@keyframes bg-breathe {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
 #app {
   position: relative;
   z-index: 1;
@@ -383,13 +398,14 @@ body {
   margin-left: 2px;
 }
 
-.ball-flavor {
-  font-size: 0.78rem;
-  color: #777;
+.shiny-flavor {
+  font-size: 0.82rem;
+  color: #888;
   font-style: italic;
   text-align: center;
-  line-height: 1.45;
-  max-width: 180px;
+  line-height: 1.5;
+  max-width: 320px;
+  margin-top: 0.25rem;
 }
 
 .ball-prompt {
@@ -512,53 +528,94 @@ body {
   text-transform: uppercase;
 }
 
-/* --- Gallery star chart --- */
+/* --- Gallery star chart (full-screen overlay) --- */
 
-.gallery-screen {
-  width: 100%;
-  max-width: 900px;
-  gap: 1rem;
+.gallery-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #080c12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gallery-canvas {
+  flex: 1;
   width: 100%;
-  border-radius: 8px;
   display: block;
+  cursor: default;
 }
 
+.gallery-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 10;
+  font-size: 1.6rem;
+  color: rgba(200,200,200,0.45);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: color 0.3s;
+}
+.gallery-close:hover {
+  color: rgba(240,240,240,0.8);
+}
+
+/* Symbolic toggle buttons — two colored circles per button */
 .gallery-toggles {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.4rem;
+  gap: 10px;
+  padding: 10px 0 14px;
+  z-index: 10;
 }
 
-.gallery-toggle {
-  padding: 0.35rem 0.75rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.7rem;
-  color: rgba(200,200,200,0.55);
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
+.gallery-symbtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
   cursor: pointer;
-  transition: color 0.25s, background 0.25s, border-color 0.25s;
+  transition: background 0.25s, border-color 0.25s;
+}
+.gallery-symbtn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+}
+.gallery-symbtn.active {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.22);
 }
 
-.gallery-toggle:hover {
-  color: rgba(220,220,220,0.8);
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.18);
+.gallery-symdot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px currentColor;
 }
 
-.gallery-toggle.active {
-  color: rgba(240,240,240,0.9);
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.25);
+/* Step / ball counters */
+.gallery-counters {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  display: flex;
+  gap: 18px;
+  z-index: 10;
 }
 
-.gallery-restart {
-  margin-top: 0.5rem;
+.gallery-counter {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8rem;
+  color: rgba(200,200,200,0.4);
+  letter-spacing: 0.02em;
 }
 
 /* --- Shiny reveal two-button row --- */
@@ -578,7 +635,8 @@ body {
   .question-text { font-size: 1.05rem; }
   .reveal-balls { flex-direction: column; align-items: center; }
   .ball-artwork { width: 110px; height: 110px; }
-  .gallery-toggle { font-size: 0.65rem; padding: 0.3rem 0.6rem; }
+  .gallery-symbtn { padding: 5px 6px; gap: 3px; }
+  .gallery-symdot { width: 8px; height: 8px; }
 }
   </style>
 </head>
@@ -593,6 +651,117 @@ window.POKE_MYSTERY_DATA = {"version": "0.1.0", "generated": "2026-05-23T04:52:2
 </script>
 <script>
 window.Poke_Mystery = {};
+// ===== text/descriptors.js =====
+// ===== Poké_Mystery Descriptors =====
+// "You are..." poem fragments, one pool per axis × direction.
+// No word appears as a distinctive phrase-starter in more than one pool.
+// Attaches to window.Poke_Mystery.
+
+Poke_Mystery.descriptors = {
+  reach: {
+    pos: ["drawn to the vast", "pulled toward the cosmic", "eyes on the horizon", "at home in the infinite", "a quiet astronomer"],
+    neg: ["rooted in the familiar", "drawn to the near and the known", "a keeper of small things", "grounded, deliberate", "at home in the particular"]
+  },
+  tempo: {
+    pos: ["moving with patience", "still at the centre", "unhurried, steady", "a slow-burning fire", "patient as stone"],
+    neg: ["quick as a spark", "restless, alive", "moving before the thought forms", "born for the wind", "a live wire humming"]
+  },
+  nature: {
+    pos: ["shaped by structure", "drawn to the made and the measured", "a builder of systems", "at home in the blueprint", "thinking in frameworks"],
+    neg: ["wild as weather", "drawn to the raw and the real", "kin to soil and rain", "answering to instinct", "a creature of seasons"]
+  },
+  tether: {
+    pos: ["finding peace in solitude", "a private constellation", "standing apart, watching", "whole in the quiet", "drawn to empty spaces"],
+    neg: ["woven into others", "a thread in a larger cloth", "nurtured by the crowd", "finding meaning in belonging", "hands reaching out"]
+  },
+  aura: {
+    pos: ["a trickster's glint in the eye", "finding gravity in lightness", "a crooked smile", "serious about not being serious", "drawn to the strange and the silly"],
+    neg: ["carrying a quiet weight", "earnest to the bone", "dignified, steady, true", "a straight line in a crooked world", "finding gravity in sincerity"]
+  }
+};
+
+// ===== text/phrases.js =====
+// ===== Poké_Mystery Arrival Phrases =====
+// Third-person narrator describing how each Pokémon appears.
+// Three role pools: mirror (closest match), shadow (contrast), stranger (wildcard).
+// Gated by Pokémon's strongest axis, direction, and shape/type constraints.
+// Attaches to window.Poke_Mystery.
+
+Poke_Mystery.phraseShapeGroups = {
+  NOT_FLYING: ["armor","ball","blob","fish","heads","humanoid","legs","quadruped","squiggle","tentacles","upright"],
+  NO_LEGS:    ["ball","blob","fish","squiggle","tentacles","wings","bug-wings"],
+  NO_UPRIGHT: ["ball","blob","fish","squiggle","tentacles","quadruped","armor"]
+};
+
+Poke_Mystery.phrases = {
+  0: [ // mirror — closest match
+    { axis: "reach", dir: 1, min: 2, text: "Arrived as if it already knew the way." },
+    { axis: "reach", dir: 1, min: 2, text: "From somewhere beyond. But here now." },
+    { axis: "reach", dir: -1, min: 2, text: "Was already nearby. Just had to look up." },
+    { axis: "reach", dir: -1, min: 2, text: "Never left. Just waited to be seen." },
+    { axis: "tempo", dir: 1, min: 2, text: "Took its time. Arrived exactly when it meant to." },
+    { axis: "tempo", dir: 1, min: 2, text: "Slow, certain. No need to rush." },
+    { axis: "tempo", dir: -1, min: 2, text: "Arrived before the question finished." },
+    { axis: "tempo", dir: -1, min: 2, text: "Quick. Like it was already running.", exclude_shapes: "NO_LEGS" },
+    { axis: "nature", dir: 1, min: 2, text: "Stepped out of something precise. A mechanism, maybe.", exclude_shapes: "NO_LEGS" },
+    { axis: "nature", dir: 1, min: 2, text: "Calculated. But not cold. Just exact." },
+    { axis: "nature", dir: -1, min: 2, text: "Came through the undergrowth. Quiet as moss." },
+    { axis: "nature", dir: -1, min: 2, text: "Wild and unbothered. Like weather." },
+    { axis: "tether", dir: 1, min: 2, text: "Alone, but not lonely. Just solitary by nature." },
+    { axis: "tether", dir: 1, min: 2, text: "From the edges. Where the crowd thins out." },
+    { axis: "tether", dir: -1, min: 2, text: "Brought company. Even alone, it brought company." },
+    { axis: "tether", dir: -1, min: 2, text: "Reached out before it was fully here." },
+    { axis: "aura", dir: 1, min: 2, text: "Smiling. Or something close to it." },
+    { axis: "aura", dir: 1, min: 2, text: "Tripped on the way in. Meant to?", exclude_shapes: "NO_LEGS" },
+    { axis: "aura", dir: -1, min: 2, text: "Solemn. Straight-backed. Here for something true.", exclude_shapes: "NO_UPRIGHT" },
+    { axis: "aura", dir: -1, min: 2, text: "Carrying a quiet gravity. Not heavy. Just real." }
+  ],
+  1: [ // shadow — contrast
+    { axis: "reach", dir: 1, min: 2, text: "Circled twice before landing.", exclude_shapes: "NOT_FLYING" },
+    { axis: "reach", dir: 1, min: 2, text: "From the same sky, but a different star." },
+    { axis: "reach", dir: -1, min: 2, text: "Same ground. Different path across it." },
+    { axis: "reach", dir: -1, min: 2, text: "A neighbour you never noticed." },
+    { axis: "tempo", dir: 1, min: 2, text: "Waited for the first to settle. Then followed." },
+    { axis: "tempo", dir: 1, min: 2, text: "Behind by a beat. Deliberately." },
+    { axis: "tempo", dir: -1, min: 2, text: "Came in on the tailwind. A little breathless.", exclude_shapes: "NOT_FLYING" },
+    { axis: "tempo", dir: -1, min: 2, text: "Darted in after the first. Racing, or dancing.", exclude_shapes: "NO_LEGS" },
+    { axis: "nature", dir: 1, min: 2, text: "Different blueprints. Same foundations." },
+    { axis: "nature", dir: 1, min: 2, text: "Made of the same stuff, assembled differently." },
+    { axis: "nature", dir: -1, min: 2, text: "A different season. Same forest." },
+    { axis: "nature", dir: -1, min: 2, text: "From downstream. Carried the same current.", types: ["water"] },
+    { axis: "tether", dir: 1, min: 2, text: "Watching from a little further out. Curious." },
+    { axis: "tether", dir: 1, min: 2, text: "Keeping its own distance. But still here." },
+    { axis: "tether", dir: -1, min: 2, text: "Came looking for the first. Found you instead." },
+    { axis: "tether", dir: -1, min: 2, text: "Brought someone with it. Couldn't help it." },
+    { axis: "aura", dir: 1, min: 2, text: "Slipped through a side door. Grinning." },
+    { axis: "aura", dir: 1, min: 2, text: "Humming. Or laughing. Hard to tell." },
+    { axis: "aura", dir: -1, min: 2, text: "Followed the first with a nod. Understanding." },
+    { axis: "aura", dir: -1, min: 2, text: "Serious, but warm. Like it knew why it was here." }
+  ],
+  2: [ // stranger — wildcard
+    { axis: "reach", dir: 1, min: 2, text: "Drifted in from the periphery.", exclude_shapes: "NOT_FLYING" },
+    { axis: "reach", dir: 1, min: 2, text: "From a long way off. Took the scenic route." },
+    { axis: "reach", dir: -1, min: 2, text: "Stumbled in, looked around, stayed.", exclude_shapes: "NO_LEGS" },
+    { axis: "reach", dir: -1, min: 2, text: "Close to home. But not quite the same street." },
+    { axis: "tempo", dir: 1, min: 2, text: "The last to arrive. Unbothered by that." },
+    { axis: "tempo", dir: 1, min: 2, text: "Sauntered in. No hurry. No apology.", exclude_shapes: "NO_LEGS" },
+    { axis: "tempo", dir: -1, min: 2, text: "Late. Or early. Hard to tell with this one." },
+    { axis: "tempo", dir: -1, min: 2, text: "Burst through. Didn't knock." },
+    { axis: "nature", dir: 1, min: 2, text: "Materialized from something orderly. Then broke formation." },
+    { axis: "nature", dir: 1, min: 2, text: "An anomaly in the data set. Here anyway." },
+    { axis: "nature", dir: -1, min: 2, text: "Came through the walls. Metaphorically. Probably." },
+    { axis: "nature", dir: -1, min: 2, text: "A wildcard. Doesn't follow the rules of the clearing." },
+    { axis: "tether", dir: 1, min: 2, text: "Keeps to itself. But it's curious about you." },
+    { axis: "tether", dir: 1, min: 2, text: "From further out than the rest. Still listening." },
+    { axis: "tether", dir: -1, min: 2, text: "Invited itself. Brought snacks." },
+    { axis: "tether", dir: -1, min: 2, text: "Tagged along with the second. Nobody minded." },
+    { axis: "aura", dir: 1, min: 2, text: "Tripped over the briefcase. Played it off.", exclude_shapes: "NO_LEGS" },
+    { axis: "aura", dir: 1, min: 2, text: "Giggling in the corner. At what?" },
+    { axis: "aura", dir: -1, min: 2, text: "Arrived with purpose. Didn't say what." },
+    { axis: "aura", dir: -1, min: 2, text: "Stoic. Still. Watching you back." }
+  ]
+};
+
 // ===== questions.js =====
 // ===== Poké_Mystery Question Pool =====
 // 60 questions sampled down to 15 per quiz session.
@@ -1877,29 +2046,6 @@ Poke_Mystery.engine = (function() {
 
   var AXIS_NAMES = ["reach", "tempo", "nature", "tether", "aura"];
 
-  var DESCRIPTORS = {
-    reach: {
-      pos: ["drawn to the vast", "pulled toward the cosmic", "eyes on the horizon", "at home in the infinite", "a quiet astronomer"],
-      neg: ["rooted in the familiar", "drawn to the near and the known", "a keeper of small things", "grounded, deliberate", "at home in the particular"]
-    },
-    tempo: {
-      pos: ["moving with patience", "still at the centre", "unhurried, deliberate", "a slow-burning fire", "patient as stone"],
-      neg: ["quick as a spark", "restless, alive", "moving before the thought forms", "born for the wind", "a live wire humming"]
-    },
-    nature: {
-      pos: ["shaped by structure", "drawn to the made and the measured", "a builder of systems", "at home in the blueprint", "thinking in frameworks"],
-      neg: ["wild as weather", "drawn to the raw and the real", "kin to soil and rain", "answering to instinct", "a creature of seasons"]
-    },
-    tether: {
-      pos: ["finding peace in solitude", "a private constellation", "standing apart, watching", "whole in the quiet", "drawn to empty spaces"],
-      neg: ["woven into others", "a thread in a larger cloth", "nurtured by the crowd", "finding meaning in belonging", "hands reaching out"]
-    },
-    aura: {
-      pos: ["a trickster's glint in the eye", "finding gravity in lightness", "a crooked smile", "serious about not being serious", "drawn to the strange and the silly"],
-      neg: ["carrying a quiet weight", "earnest to the bone", "dignified, deliberate, true", "a straight line in a crooked world", "finding gravity in sincerity"]
-    }
-  };
-
   function describeVector(userVector) {
     // Normalize accumulated vector to ~[-5,+5] range
     // After 15 questions at ±3 per axis, typical max per axis is ~9-15
@@ -1917,11 +2063,13 @@ Poke_Mystery.engine = (function() {
     var strong = axes.filter(function(a) { return a.abs >= threshold; });
     if (strong.length < 2) strong = axes.slice(0, 2); // always at least 2
 
+    var pools = Poke_Mystery.descriptors;
+
     // Build description from top 3
     var parts = [];
     var used = strong.slice(0, 3);
     used.forEach(function(a) {
-      var pool = a.value > 0 ? DESCRIPTORS[a.axis].pos : DESCRIPTORS[a.axis].neg;
+      var pool = a.value > 0 ? pools[a.axis].pos : pools[a.axis].neg;
       var phrase = pool[Math.floor(Math.random() * pool.length)];
       parts.push(phrase);
     });
@@ -1934,83 +2082,10 @@ Poke_Mystery.engine = (function() {
   // --- Arrival phrases for trio cards ---
   // Third-person narrator describing how each Pokémon appears.
   // Gated by the Pokémon's strongest axis coordinate.
-
-  // Shape groups for phrase gating
-  var NOT_FLYING = ["armor","ball","blob","fish","heads","humanoid","legs","quadruped","squiggle","tentacles","upright"];
-  var NO_LEGS = ["ball","blob","fish","squiggle","tentacles","wings","bug-wings"];
-  var NO_UPRIGHT = ["ball","blob","fish","squiggle","tentacles","quadruped","armor"];
-
-  var PHRASES = {
-    0: [ // closest match
-      { axis: "reach", dir: 1, min: 2, text: "Arrived as if it already knew the way." },
-      { axis: "reach", dir: 1, min: 2, text: "From somewhere beyond. But here now." },
-      { axis: "reach", dir: -1, min: 2, text: "Was already nearby. Just had to look up." },
-      { axis: "reach", dir: -1, min: 2, text: "Never left. Just waited to be seen." },
-      { axis: "tempo", dir: 1, min: 2, text: "Took its time. Arrived exactly when it meant to." },
-      { axis: "tempo", dir: 1, min: 2, text: "Slow, certain. No need to rush." },
-      { axis: "tempo", dir: -1, min: 2, text: "Arrived before the question finished." },
-      { axis: "tempo", dir: -1, min: 2, text: "Quick. Like it was already running.", exclude_shapes: NO_LEGS },
-      { axis: "nature", dir: 1, min: 2, text: "Stepped out of something precise. A mechanism, maybe.", exclude_shapes: NO_LEGS },
-      { axis: "nature", dir: 1, min: 2, text: "Calculated. But not cold. Just exact." },
-      { axis: "nature", dir: -1, min: 2, text: "Came through the undergrowth. Quiet as moss." },
-      { axis: "nature", dir: -1, min: 2, text: "Wild and unbothered. Like weather." },
-      { axis: "tether", dir: 1, min: 2, text: "Alone, but not lonely. Just solitary by nature." },
-      { axis: "tether", dir: 1, min: 2, text: "From the edges. Where the crowd thins out." },
-      { axis: "tether", dir: -1, min: 2, text: "Brought company. Even alone, it brought company." },
-      { axis: "tether", dir: -1, min: 2, text: "Reached out before it was fully here." },
-      { axis: "aura", dir: 1, min: 2, text: "Smiling. Or something close to it." },
-      { axis: "aura", dir: 1, min: 2, text: "Tripped on the way in. Meant to?", exclude_shapes: NO_LEGS },
-      { axis: "aura", dir: -1, min: 2, text: "Solemn. Straight-backed. Here for something true.", exclude_shapes: NO_UPRIGHT },
-      { axis: "aura", dir: -1, min: 2, text: "Carrying a quiet gravity. Not heavy. Just real." }
-    ],
-    1: [ // contrast
-      { axis: "reach", dir: 1, min: 2, text: "Circled twice before landing.", exclude_shapes: NOT_FLYING },
-      { axis: "reach", dir: 1, min: 2, text: "From the same sky, but a different star." },
-      { axis: "reach", dir: -1, min: 2, text: "Same ground. Different path across it." },
-      { axis: "reach", dir: -1, min: 2, text: "A neighbour you never noticed." },
-      { axis: "tempo", dir: 1, min: 2, text: "Waited for the first to settle. Then followed." },
-      { axis: "tempo", dir: 1, min: 2, text: "Behind by a beat. Deliberately." },
-      { axis: "tempo", dir: -1, min: 2, text: "Came in on the tailwind. A little breathless.", exclude_shapes: NOT_FLYING },
-      { axis: "tempo", dir: -1, min: 2, text: "Darted in after the first. Racing, or dancing.", exclude_shapes: NO_LEGS },
-      { axis: "nature", dir: 1, min: 2, text: "Different blueprints. Same foundations." },
-      { axis: "nature", dir: 1, min: 2, text: "Made of the same stuff, assembled differently." },
-      { axis: "nature", dir: -1, min: 2, text: "A different season. Same forest." },
-      { axis: "nature", dir: -1, min: 2, text: "From downstream. Carried the same current.", types: ["water"] },
-      { axis: "tether", dir: 1, min: 2, text: "Watching from a little further out. Curious." },
-      { axis: "tether", dir: 1, min: 2, text: "Keeping its own distance. But still here." },
-      { axis: "tether", dir: -1, min: 2, text: "Came looking for the first. Found you instead." },
-      { axis: "tether", dir: -1, min: 2, text: "Brought someone with it. Couldn't help it." },
-      { axis: "aura", dir: 1, min: 2, text: "Slipped through a side door. Grinning." },
-      { axis: "aura", dir: 1, min: 2, text: "Humming. Or laughing. Hard to tell." },
-      { axis: "aura", dir: -1, min: 2, text: "Followed the first with a nod. Understanding." },
-      { axis: "aura", dir: -1, min: 2, text: "Serious, but warm. Like it knew why it was here." }
-    ],
-    2: [ // wildcard
-      { axis: "reach", dir: 1, min: 2, text: "Drifted in from the periphery.", exclude_shapes: NOT_FLYING },
-      { axis: "reach", dir: 1, min: 2, text: "From a long way off. Took the scenic route." },
-      { axis: "reach", dir: -1, min: 2, text: "Stumbled in, looked around, stayed.", exclude_shapes: NO_LEGS },
-      { axis: "reach", dir: -1, min: 2, text: "Close to home. But not quite the same street." },
-      { axis: "tempo", dir: 1, min: 2, text: "The last to arrive. Unbothered by that." },
-      { axis: "tempo", dir: 1, min: 2, text: "Sauntered in. No hurry. No apology.", exclude_shapes: NO_LEGS },
-      { axis: "tempo", dir: -1, min: 2, text: "Late. Or early. Hard to tell with this one." },
-      { axis: "tempo", dir: -1, min: 2, text: "Burst through. Didn't knock." },
-      { axis: "nature", dir: 1, min: 2, text: "Materialized from something orderly. Then broke formation." },
-      { axis: "nature", dir: 1, min: 2, text: "An anomaly in the data set. Here anyway." },
-      { axis: "nature", dir: -1, min: 2, text: "Came through the walls. Metaphorically. Probably." },
-      { axis: "nature", dir: -1, min: 2, text: "A wildcard. Doesn't follow the rules of the clearing." },
-      { axis: "tether", dir: 1, min: 2, text: "Keeps to itself. But it's curious about you." },
-      { axis: "tether", dir: 1, min: 2, text: "From further out than the rest. Still listening." },
-      { axis: "tether", dir: -1, min: 2, text: "Invited itself. Brought snacks." },
-      { axis: "tether", dir: -1, min: 2, text: "Tagged along with the second. Nobody minded." },
-      { axis: "aura", dir: 1, min: 2, text: "Tripped over the briefcase. Played it off.", exclude_shapes: NO_LEGS },
-      { axis: "aura", dir: 1, min: 2, text: "Giggling in the corner. At what?" },
-      { axis: "aura", dir: -1, min: 2, text: "Arrived with purpose. Didn't say what." },
-      { axis: "aura", dir: -1, min: 2, text: "Stoic. Still. Watching you back." }
-    ]
-  };
+  // Phrases and shape groups live in Poke_Mystery.phrases / Poke_Mystery.phraseShapeGroups.
 
   function phraseForRole(pokemon, roleIdx) {
-    var pool = PHRASES[roleIdx] || PHRASES[0];
+    var pool = Poke_Mystery.phrases[roleIdx] || Poke_Mystery.phrases[0];
 
     // Find the Pokémon's strongest axis
     var axes = AXIS_NAMES.map(function(axis, i) {
@@ -2027,7 +2102,10 @@ Poke_Mystery.engine = (function() {
         if (p.axis !== a.axis) return false;
         if (p.dir !== dir) return false;
         if (a.abs < (p.min || 0)) return false;
-        if (p.exclude_shapes && p.exclude_shapes.indexOf(pokemon.shape) !== -1) return false;
+        if (p.exclude_shapes) {
+          var shapeList = Poke_Mystery.phraseShapeGroups[p.exclude_shapes];
+          if (shapeList && shapeList.indexOf(pokemon.shape) !== -1) return false;
+        }
         if (p.types && !p.types.some(function(t) { return pokemon.types.indexOf(t) !== -1; })) return false;
         return true;
       });
@@ -2377,7 +2455,7 @@ Poke_Mystery.ui = (function() {
     return ball;
   }
 
-  function showPokeballReveal(trio, phrases, shinyIndex, onLockIn) {
+  function showPokeballReveal(trio, shinyIndex, onLockIn) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -2396,7 +2474,6 @@ Poke_Mystery.ui = (function() {
 
       order.forEach(function(origIdx, displayIdx) {
         var pokemon = trio[origIdx];
-        var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
         var ballType = ballTypes[displayIdx];
         var isOpen = (displayIdx === openedIndex);
         var isShinyCard = (origIdx === shinyIndex);
@@ -2423,12 +2500,10 @@ Poke_Mystery.ui = (function() {
           art.loading = "lazy";
 
           var nameEl = el("div", "ball-name", capitalise(pokemon.name) + (isShinyCard ? ' <span class="ball-star">&#9733;</span>' : ""));
-          var flavor = el("div", "ball-flavor", phrase);
           var prompt = el("div", "ball-prompt", "Click again to choose");
 
           wrap.appendChild(art);
           wrap.appendChild(nameEl);
-          wrap.appendChild(flavor);
           wrap.appendChild(prompt);
 
           wrap.addEventListener("click", function() {
@@ -2447,7 +2522,7 @@ Poke_Mystery.ui = (function() {
 
   // --- Shiny reveal ---
 
-  function showShinyRoll(pokemon, isShiny, onViewMap, onRestart) {
+  function showShinyRoll(pokemon, isShiny, phrase, onViewMap, onRestart) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -2480,6 +2555,11 @@ Poke_Mystery.ui = (function() {
     reveal.appendChild(nameWrap);
     reveal.appendChild(genusField);
 
+    if (phrase) {
+      var flavorEl = el("div", "shiny-flavor", phrase);
+      reveal.appendChild(flavorEl);
+    }
+
     var btnRow = el("div", "shiny-btns");
 
     var mapBtn = el("button", "btn-retry", "Something else…");
@@ -2496,57 +2576,89 @@ Poke_Mystery.ui = (function() {
 
   // --- Gallery star chart ---
 
-  var AXIS_LABELS = [
-    { name: "Reach",    neg: "Humble",    pos: "Cosmic" },
-    { name: "Tempo",    neg: "Mercurial", pos: "Stoic" },
-    { name: "Nature",   neg: "Wild",      pos: "Wrought" },
-    { name: "Tether",   neg: "Kith",      pos: "Kinless" },
-    { name: "Aura",     neg: "Earnest",   pos: "Capricious" }
-  ];
-
   var AXIS_PAIRS = [
-    { label: "Reach / Tempo",      x: 0, y: 1 },
-    { label: "Nature / Tether",    x: 2, y: 3 },
-    { label: "Aura / Reach",       x: 4, y: 0 },
-    { label: "Tempo / Nature",     x: 1, y: 2 },
-    { label: "Tether / Aura",      x: 3, y: 4 }
+    { x: 0, y: 1 },
+    { x: 2, y: 3 },
+    { x: 4, y: 0 },
+    { x: 1, y: 2 },
+    { x: 3, y: 4 }
   ];
 
-  function showGallery(userVector, trio, chosenPokemon, allPokemon, onRestart) {
-    var container = document.getElementById("app");
-    if (!container) return;
-    clear(container);
+  function showGallery(userVector, trio, chosenPokemon, allPokemon, onClose) {
+    var hue = Poke_Mystery.colors.AXIS_HUE;
 
-    var screen = el("div", "screen gallery-screen");
+    var overlay = el("div", "gallery-overlay");
     var canvas = el("canvas", "gallery-canvas");
     var ctx = canvas.getContext("2d");
 
     var currentPair = 0;
 
+    // Symbolic toggle buttons — colored circles
     var toggles = el("div", "gallery-toggles");
     AXIS_PAIRS.forEach(function(pair, i) {
-      var btn = el("button", "gallery-toggle" + (i === 0 ? " active" : ""), pair.label);
+      var btn = el("button", "gallery-symbtn" + (i === 0 ? " active" : ""));
+      var c1 = el("span", "gallery-symdot");
+      c1.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.x]] + ", 55%, 55%)";
+      var c2 = el("span", "gallery-symdot");
+      c2.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.y]] + ", 55%, 55%)";
+      btn.appendChild(c1);
+      btn.appendChild(c2);
       btn.addEventListener("click", function() {
         currentPair = i;
-        var allToggles = toggles.querySelectorAll(".gallery-toggle");
-        allToggles.forEach(function(t) { t.classList.remove("active"); });
+        var allBtns = toggles.querySelectorAll(".gallery-symbtn");
+        allBtns.forEach(function(t) { t.classList.remove("active"); });
         btn.classList.add("active");
         drawGallery(canvas, ctx, pair.x, pair.y, userVector, trio, chosenPokemon, allPokemon);
       });
       toggles.appendChild(btn);
     });
 
-    var restartBtn = el("button", "btn-retry gallery-restart", "Take the quiz again");
-    restartBtn.addEventListener("click", onRestart);
+    // Close button
+    var closeBtn = el("button", "gallery-close", "×");
+    closeBtn.addEventListener("click", onClose);
 
-    screen.appendChild(canvas);
-    screen.appendChild(toggles);
-    screen.appendChild(restartBtn);
-    container.appendChild(screen);
+    // Placeholder counters
+    var counters = el("div", "gallery-counters");
+    var stepsEl = el("span", "gallery-counter", "Steps: 0");
+    var ballsEl = el("span", "gallery-counter", "Balls: 0");
+    counters.appendChild(stepsEl);
+    counters.appendChild(ballsEl);
+
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(canvas);
+    overlay.appendChild(toggles);
+    overlay.appendChild(counters);
+    document.body.appendChild(overlay);
+
+    // Escape to close
+    function onKey(e) {
+      if (e.key === "Escape") { onClose(); }
+    }
+    document.addEventListener("keydown", onKey);
+
+    function cleanup() {
+      document.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", resize);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }
+
+    // Override onClose to clean up
+    var wrappedClose = function() {
+      cleanup();
+      onClose();
+    };
+    closeBtn.removeEventListener("click", onClose);
+    closeBtn.addEventListener("click", wrappedClose);
+    // Also update escape handler
+    document.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") wrappedClose();
+    });
+    window.addEventListener("resize", resize);
 
     function resize() {
-      var w = screen.clientWidth;
-      var h = Math.max(window.innerHeight * 0.55, 350);
+      var w = overlay.clientWidth;
+      var h = overlay.clientHeight;
       var dpr = window.devicePixelRatio || 1;
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
@@ -2558,7 +2670,6 @@ Poke_Mystery.ui = (function() {
         userVector, trio, chosenPokemon, allPokemon);
     }
 
-    window.addEventListener("resize", resize);
     resize();
   }
 
@@ -2567,44 +2678,17 @@ Poke_Mystery.ui = (function() {
     var H = canvas.height / (window.devicePixelRatio || 1);
     if (W <= 0 || H <= 0) return;
 
-    var pad = { top: 32, right: 28, bottom: 36, left: 36 };
-    var pw = W - pad.left - pad.right;
-    var ph = H - pad.top - pad.bottom;
-
-    // Coordinate range: [-5, +5] for both axes
-    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
-
-    function toX(val) { return pad.left + ((val - xMin) / (xMax - xMin)) * pw; }
-    function toY(val) { return pad.top + ((yMax - val) / (yMax - yMin)) * ph; }
-
     var colors = Poke_Mystery.colors;
 
-    // Background
-    ctx.fillStyle = "#0d1117";
+    // Dark void
+    ctx.fillStyle = "#080c12";
     ctx.fillRect(0, 0, W, H);
 
-    // Grid lines at axis zero-crossings
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(toX(0), pad.top);
-    ctx.lineTo(toX(0), pad.top + ph);
-    ctx.moveTo(pad.left, toY(0));
-    ctx.lineTo(pad.left + pw, toY(0));
-    ctx.stroke();
+    // Coordinate range
+    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
 
-    // Subtle grid at +/-2.5
-    ctx.strokeStyle = "rgba(255,255,255,0.03)";
-    [-2.5, 2.5].forEach(function(v) {
-      ctx.beginPath();
-      ctx.moveTo(toX(v), pad.top);
-      ctx.lineTo(toX(v), pad.top + ph);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(pad.left, toY(v));
-      ctx.lineTo(pad.left + pw, toY(v));
-      ctx.stroke();
-    });
+    function toX(val) { return ((val - xMin) / (xMax - xMin)) * W; }
+    function toY(val) { return ((yMax - val) / (yMax - yMin)) * H; }
 
     // All Pokemon dots
     var trioIds = trio ? trio.map(function(p) { return p.id; }) : [];
@@ -2613,15 +2697,14 @@ Poke_Mystery.ui = (function() {
     allPokemon.forEach(function(p) {
       var cx = toX(p.coords[xAxis]);
       var cy = toY(p.coords[yAxis]);
-      if (cx < pad.left - 2 || cx > pad.left + pw + 2) return;
-      if (cy < pad.top - 2 || cy > pad.top + ph + 2) return;
+      if (cx < -4 || cx > W + 4) return;
+      if (cy < -4 || cy > H + 4) return;
 
-      // Skip trio members — they get special rendering
       if (trioIds.indexOf(p.id) !== -1 || p.id === chosenId) return;
 
       ctx.fillStyle = colors.dotColor(p.coords);
       ctx.beginPath();
-      ctx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
       ctx.fill();
     });
 
@@ -2631,13 +2714,11 @@ Poke_Mystery.ui = (function() {
         var cx = toX(p.coords[xAxis]);
         var cy = toY(p.coords[yAxis]);
 
-        // Larger dot
         var isChosen = p.id === chosenId;
-        var size = isChosen ? 6 : 4.5;
-        var alpha = isChosen ? 0.9 : 0.7;
+        var size = isChosen ? 5 : 3.5;
+        var alpha = isChosen ? 0.9 : 0.65;
 
-        // Glow under the dot
-        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 3);
+        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 4);
         var hue = isChosen ? 45 : (colors.AXIS_HUE[colors.AXIS_ORDER[
           [0,1,2,3,4].sort(function(a,b){
             return Math.abs(p.coords[b]) - Math.abs(p.coords[a]);
@@ -2647,16 +2728,14 @@ Poke_Mystery.ui = (function() {
         glow.addColorStop(1, "hsla(" + hue + ", 60%, 60%, 0)");
         ctx.fillStyle = glow;
         ctx.beginPath();
-        ctx.arc(cx, cy, size * 3, 0, Math.PI * 2);
+        ctx.arc(cx, cy, size * 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Dot
         ctx.fillStyle = "hsla(" + hue + ", 50%, 55%, " + alpha + ")";
         ctx.beginPath();
         ctx.arc(cx, cy, size, 0, Math.PI * 2);
         ctx.fill();
 
-        // Ring for chosen
         if (isChosen) {
           ctx.strokeStyle = "hsla(45, 70%, 55%, 0.7)";
           ctx.lineWidth = 1.5;
@@ -2664,12 +2743,6 @@ Poke_Mystery.ui = (function() {
           ctx.arc(cx, cy, size + 5, 0, Math.PI * 2);
           ctx.stroke();
         }
-
-        // Name label
-        ctx.fillStyle = "rgba(220,220,220,0.75)";
-        ctx.font = "12px Georgia, serif";
-        ctx.textAlign = "center";
-        ctx.fillText(capitalise(p.name), cx, cy - size - 6);
       });
     }
 
@@ -2677,56 +2750,19 @@ Poke_Mystery.ui = (function() {
     var ux = toX(userVector[xAxis]);
     var uy = toY(userVector[yAxis]);
 
-    // Outer glow
-    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 18);
-    userGlow.addColorStop(0, "rgba(255,200,60,0.5)");
-    userGlow.addColorStop(0.5, "rgba(255,180,40,0.15)");
+    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 20);
+    userGlow.addColorStop(0, "rgba(255,200,60,0.45)");
+    userGlow.addColorStop(0.5, "rgba(255,180,40,0.12)");
     userGlow.addColorStop(1, "rgba(255,160,30,0)");
     ctx.fillStyle = userGlow;
     ctx.beginPath();
-    ctx.arc(ux, uy, 18, 0, Math.PI * 2);
+    ctx.arc(ux, uy, 20, 0, Math.PI * 2);
     ctx.fill();
 
-    // Inner dot
     ctx.fillStyle = "rgba(255,210,80,0.9)";
     ctx.beginPath();
-    ctx.arc(ux, uy, 5, 0, Math.PI * 2);
+    ctx.arc(ux, uy, 4, 0, Math.PI * 2);
     ctx.fill();
-
-    // Axis labels
-    var labelStyle = "11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-    ctx.fillStyle = "rgba(200,200,200,0.5)";
-    ctx.font = labelStyle;
-
-    // X-axis labels
-    var xAxisInfo = AXIS_LABELS[xAxis];
-    ctx.textAlign = "left";
-    ctx.fillText(xAxisInfo.neg, pad.left, pad.top + ph + 20);
-    ctx.textAlign = "right";
-    ctx.fillText(xAxisInfo.pos, pad.left + pw, pad.top + ph + 20);
-    ctx.textAlign = "center";
-    ctx.fillText(xAxisInfo.name, pad.left + pw / 2, pad.top + ph + 20);
-
-    // Y-axis labels
-    var yAxisInfo = AXIS_LABELS[yAxis];
-    ctx.save();
-    ctx.translate(pad.left - 18, pad.top + ph / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.neg, 0, 0);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(pad.left - 18, pad.top);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.pos, 0, 0);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(pad.left - 26, pad.top + ph / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillText(yAxisInfo.name, 0, 0);
-    ctx.restore();
   }
 
   function capitalise(s) {
@@ -2916,12 +2952,14 @@ Poke_Mystery.main = (function() {
 
   function showPokeballReveal() {
     state.phase = "pokeballs";
-    ui.showPokeballReveal(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
+    ui.showPokeballReveal(state.trio, state.shinyIndex, function(pokemon) {
       state.chosenPokemon = pokemon;
       var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
       state.isShiny = pickedShinyCard || engine.shinyRoll();
       state.phase = "chosen";
-      ui.showShinyRoll(pokemon, state.isShiny, function() {
+      var chosenIdx = state.trio.indexOf(pokemon);
+      var chosenPhrase = (state.trioPhrases && chosenIdx >= 0) ? state.trioPhrases[chosenIdx] : "";
+      ui.showShinyRoll(pokemon, state.isShiny, chosenPhrase, function() {
         showGallery();
       }, function() {
         startQuiz();

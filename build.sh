@@ -36,6 +36,8 @@ print('window.POKE_MYSTERY_DATA = ' + json.dumps(data) + ';')
   echo '<script>'
   echo 'window.Poke_Mystery = {};'
   for js in \
+    text/descriptors.js \
+    text/phrases.js \
     questions.js \
     engine.js \
     environment.js \
