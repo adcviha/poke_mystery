@@ -165,8 +165,17 @@ Poke_Mystery.main = (function() {
       state.isShiny = pickedShinyCard || engine.shinyRoll();
       state.phase = "chosen";
       ui.showShinyRoll(pokemon, state.isShiny, function() {
+        showGallery();
+      }, function() {
         startQuiz();
       });
+    });
+  }
+
+  function showGallery() {
+    state.phase = "gallery";
+    ui.showGallery(state.userVector, state.trio, state.chosenPokemon, pokemonData, function() {
+      startQuiz();
     });
   }
 

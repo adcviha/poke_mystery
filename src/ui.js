@@ -280,7 +280,7 @@ Poke_Mystery.ui = (function() {
 
   // --- Shiny reveal ---
 
-  function showShinyRoll(pokemon, isShiny, onContinue) {
+  function showShinyRoll(pokemon, isShiny, onViewMap, onRestart) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
@@ -300,7 +300,7 @@ Poke_Mystery.ui = (function() {
       var flash = el("div", "shiny-flash");
       reveal.appendChild(flash);
 
-      var star = el("span", "shiny-star", "★"); // ★
+      var star = el("span", "shiny-star", "★");
       nameWrap.appendChild(nameField);
       nameWrap.appendChild(star);
     } else {
@@ -313,32 +313,253 @@ Poke_Mystery.ui = (function() {
     reveal.appendChild(nameWrap);
     reveal.appendChild(genusField);
 
-    var retryBtn = el("button", "btn-retry", "Take the quiz again");
-    retryBtn.addEventListener("click", onContinue);
+    var btnRow = el("div", "shiny-btns");
 
-    reveal.appendChild(retryBtn);
+    var mapBtn = el("button", "btn-retry", "Something else…");
+    mapBtn.addEventListener("click", onViewMap);
+
+    var retryBtn = el("button", "btn-retry", "Take the quiz again");
+    retryBtn.addEventListener("click", onRestart);
+
+    btnRow.appendChild(mapBtn);
+    btnRow.appendChild(retryBtn);
+    reveal.appendChild(btnRow);
     screen.appendChild(reveal);
   }
 
-  // --- Environment update ---
+  // --- Gallery star chart ---
 
-  function updateEnvironment(vector) {
-    var hues = {
-      reach: 120,
-      tempo: 200,
-      nature: 90,
-      tether: 30,
-      aura: 280
-    };
-    var axes = ["reach", "tempo", "nature", "tether", "aura"];
-    var body = document.body;
+  var AXIS_LABELS = [
+    { name: "Reach",    neg: "Humble",    pos: "Cosmic" },
+    { name: "Tempo",    neg: "Mercurial", pos: "Stoic" },
+    { name: "Nature",   neg: "Wild",      pos: "Wrought" },
+    { name: "Tether",   neg: "Kith",      pos: "Kinless" },
+    { name: "Aura",     neg: "Earnest",   pos: "Capricious" }
+  ];
 
-    axes.forEach(function(axis, i) {
-      var val = vector[i];
-      var shift = Math.max(-20, Math.min(20, val * 1.5));
-      body.style.setProperty("--hue-" + axis, (hues[axis] + shift));
-      body.style.setProperty("--sat-" + axis, (50 + Math.abs(val) * 3) + "%");
+  var AXIS_PAIRS = [
+    { label: "Reach / Tempo",      x: 0, y: 1 },
+    { label: "Nature / Tether",    x: 2, y: 3 },
+    { label: "Aura / Reach",       x: 4, y: 0 },
+    { label: "Tempo / Nature",     x: 1, y: 2 },
+    { label: "Tether / Aura",      x: 3, y: 4 }
+  ];
+
+  function showGallery(userVector, trio, chosenPokemon, allPokemon, onRestart) {
+    var container = document.getElementById("app");
+    if (!container) return;
+    clear(container);
+
+    var screen = el("div", "screen gallery-screen");
+    var canvas = el("canvas", "gallery-canvas");
+    var ctx = canvas.getContext("2d");
+
+    var currentPair = 0;
+
+    var toggles = el("div", "gallery-toggles");
+    AXIS_PAIRS.forEach(function(pair, i) {
+      var btn = el("button", "gallery-toggle" + (i === 0 ? " active" : ""), pair.label);
+      btn.addEventListener("click", function() {
+        currentPair = i;
+        var allToggles = toggles.querySelectorAll(".gallery-toggle");
+        allToggles.forEach(function(t) { t.classList.remove("active"); });
+        btn.classList.add("active");
+        drawGallery(canvas, ctx, pair.x, pair.y, userVector, trio, chosenPokemon, allPokemon);
+      });
+      toggles.appendChild(btn);
     });
+
+    var restartBtn = el("button", "btn-retry gallery-restart", "Take the quiz again");
+    restartBtn.addEventListener("click", onRestart);
+
+    screen.appendChild(canvas);
+    screen.appendChild(toggles);
+    screen.appendChild(restartBtn);
+    container.appendChild(screen);
+
+    function resize() {
+      var w = screen.clientWidth;
+      var h = Math.max(window.innerHeight * 0.55, 350);
+      var dpr = window.devicePixelRatio || 1;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      drawGallery(canvas, ctx, AXIS_PAIRS[currentPair].x, AXIS_PAIRS[currentPair].y,
+        userVector, trio, chosenPokemon, allPokemon);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+  }
+
+  function drawGallery(canvas, ctx, xAxis, yAxis, userVector, trio, chosenPokemon, allPokemon) {
+    var W = canvas.width / (window.devicePixelRatio || 1);
+    var H = canvas.height / (window.devicePixelRatio || 1);
+    if (W <= 0 || H <= 0) return;
+
+    var pad = { top: 32, right: 28, bottom: 36, left: 36 };
+    var pw = W - pad.left - pad.right;
+    var ph = H - pad.top - pad.bottom;
+
+    // Coordinate range: [-5, +5] for both axes
+    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
+
+    function toX(val) { return pad.left + ((val - xMin) / (xMax - xMin)) * pw; }
+    function toY(val) { return pad.top + ((yMax - val) / (yMax - yMin)) * ph; }
+
+    var colors = Poke_Mystery.colors;
+
+    // Background
+    ctx.fillStyle = "#0d1117";
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid lines at axis zero-crossings
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(toX(0), pad.top);
+    ctx.lineTo(toX(0), pad.top + ph);
+    ctx.moveTo(pad.left, toY(0));
+    ctx.lineTo(pad.left + pw, toY(0));
+    ctx.stroke();
+
+    // Subtle grid at +/-2.5
+    ctx.strokeStyle = "rgba(255,255,255,0.03)";
+    [-2.5, 2.5].forEach(function(v) {
+      ctx.beginPath();
+      ctx.moveTo(toX(v), pad.top);
+      ctx.lineTo(toX(v), pad.top + ph);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pad.left, toY(v));
+      ctx.lineTo(pad.left + pw, toY(v));
+      ctx.stroke();
+    });
+
+    // All Pokemon dots
+    var trioIds = trio ? trio.map(function(p) { return p.id; }) : [];
+    var chosenId = chosenPokemon ? chosenPokemon.id : -1;
+
+    allPokemon.forEach(function(p) {
+      var cx = toX(p.coords[xAxis]);
+      var cy = toY(p.coords[yAxis]);
+      if (cx < pad.left - 2 || cx > pad.left + pw + 2) return;
+      if (cy < pad.top - 2 || cy > pad.top + ph + 2) return;
+
+      // Skip trio members — they get special rendering
+      if (trioIds.indexOf(p.id) !== -1 || p.id === chosenId) return;
+
+      ctx.fillStyle = colors.dotColor(p.coords);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Trio members highlighted
+    if (trio) {
+      trio.forEach(function(p, i) {
+        var cx = toX(p.coords[xAxis]);
+        var cy = toY(p.coords[yAxis]);
+
+        // Larger dot
+        var isChosen = p.id === chosenId;
+        var size = isChosen ? 6 : 4.5;
+        var alpha = isChosen ? 0.9 : 0.7;
+
+        // Glow under the dot
+        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 3);
+        var hue = isChosen ? 45 : (colors.AXIS_HUE[colors.AXIS_ORDER[
+          [0,1,2,3,4].sort(function(a,b){
+            return Math.abs(p.coords[b]) - Math.abs(p.coords[a]);
+          })[0]
+        ]] || 200);
+        glow.addColorStop(0, "hsla(" + hue + ", 60%, 60%, " + alpha + ")");
+        glow.addColorStop(1, "hsla(" + hue + ", 60%, 60%, 0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(cx, cy, size * 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dot
+        ctx.fillStyle = "hsla(" + hue + ", 50%, 55%, " + alpha + ")";
+        ctx.beginPath();
+        ctx.arc(cx, cy, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ring for chosen
+        if (isChosen) {
+          ctx.strokeStyle = "hsla(45, 70%, 55%, 0.7)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(cx, cy, size + 5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Name label
+        ctx.fillStyle = "rgba(220,220,220,0.75)";
+        ctx.font = "12px Georgia, serif";
+        ctx.textAlign = "center";
+        ctx.fillText(capitalise(p.name), cx, cy - size - 6);
+      });
+    }
+
+    // User position marker
+    var ux = toX(userVector[xAxis]);
+    var uy = toY(userVector[yAxis]);
+
+    // Outer glow
+    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 18);
+    userGlow.addColorStop(0, "rgba(255,200,60,0.5)");
+    userGlow.addColorStop(0.5, "rgba(255,180,40,0.15)");
+    userGlow.addColorStop(1, "rgba(255,160,30,0)");
+    ctx.fillStyle = userGlow;
+    ctx.beginPath();
+    ctx.arc(ux, uy, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner dot
+    ctx.fillStyle = "rgba(255,210,80,0.9)";
+    ctx.beginPath();
+    ctx.arc(ux, uy, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Axis labels
+    var labelStyle = "11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    ctx.fillStyle = "rgba(200,200,200,0.5)";
+    ctx.font = labelStyle;
+
+    // X-axis labels
+    var xAxisInfo = AXIS_LABELS[xAxis];
+    ctx.textAlign = "left";
+    ctx.fillText(xAxisInfo.neg, pad.left, pad.top + ph + 20);
+    ctx.textAlign = "right";
+    ctx.fillText(xAxisInfo.pos, pad.left + pw, pad.top + ph + 20);
+    ctx.textAlign = "center";
+    ctx.fillText(xAxisInfo.name, pad.left + pw / 2, pad.top + ph + 20);
+
+    // Y-axis labels
+    var yAxisInfo = AXIS_LABELS[yAxis];
+    ctx.save();
+    ctx.translate(pad.left - 18, pad.top + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(yAxisInfo.neg, 0, 0);
+    ctx.restore();
+    ctx.save();
+    ctx.translate(pad.left - 18, pad.top);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(yAxisInfo.pos, 0, 0);
+    ctx.restore();
+    ctx.save();
+    ctx.translate(pad.left - 26, pad.top + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(yAxisInfo.name, 0, 0);
+    ctx.restore();
   }
 
   function capitalise(s) {
@@ -361,7 +582,7 @@ Poke_Mystery.ui = (function() {
     showBriefcase: showBriefcase,
     showPokeballReveal: showPokeballReveal,
     showShinyRoll: showShinyRoll,
-    updateEnvironment: updateEnvironment
+    showGallery: showGallery
   };
 
 })();
