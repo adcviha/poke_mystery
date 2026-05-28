@@ -186,8 +186,6 @@ Poke_Mystery.ui = (function() {
     { name: "premier", top: "#f0f0f0", bottom: "#f0f0f0" }
   ];
 
-  var ROLE_LABELS = ["your mirror", "your shadow", "your stranger"];
-
   function pickBallTypes() {
     var pool = BALL_TYPES.slice();
     for (var i = pool.length - 1; i > 0; i--) {
@@ -234,40 +232,37 @@ Poke_Mystery.ui = (function() {
         var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
         var ballType = ballTypes[displayIdx];
         var isOpen = (displayIdx === openedIndex);
-        var roleLabel = ROLE_LABELS[origIdx];
+        var isShinyCard = (origIdx === shinyIndex);
         var primaryType = (pokemon.types && pokemon.types[0]) ? pokemon.types[0] : "normal";
         var typeHint = TYPE_HINTS[primaryType] || TYPE_HINTS["normal"];
 
         var wrap = el("div", "ball-wrap" + (isOpen ? " open" : ""));
 
         if (!isOpen) {
-          // Closed state: ball sprite + genus + type hint + role
+          // Closed state: ball sprite + genus + type hint
           wrap.appendChild(renderBall(ballType));
           wrap.appendChild(el("div", "ball-genus", pokemon.genus || ""));
           wrap.appendChild(el("div", "ball-hint", typeHint));
-          wrap.appendChild(el("div", "ball-role", roleLabel));
 
           wrap.addEventListener("click", function() {
             openedIndex = displayIdx;
             render();
           });
         } else {
-          // Open state: artwork + name + flavour text + lock-in prompt
+          // Open state: artwork (shiny if this is the shiny card) + name + flavour + prompt
           var art = el("img", "ball-artwork");
-          art.src = pokemon.artwork_url || "";
+          art.src = isShinyCard ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
           art.alt = pokemon.name;
           art.loading = "lazy";
 
           var nameEl = el("div", "ball-name", capitalise(pokemon.name));
           var flavor = el("div", "ball-flavor", phrase);
           var prompt = el("div", "ball-prompt", "Click again to choose");
-          var role = el("div", "ball-role", roleLabel);
 
           wrap.appendChild(art);
           wrap.appendChild(nameEl);
           wrap.appendChild(flavor);
           wrap.appendChild(prompt);
-          wrap.appendChild(role);
 
           wrap.addEventListener("click", function() {
             onLockIn(pokemon);

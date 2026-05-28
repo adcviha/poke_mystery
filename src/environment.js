@@ -22,6 +22,9 @@ Poke_Mystery.environment = (function() {
 
     ctx = canvas.getContext("2d");
     sizeCanvas();
+    // Start with a white canvas — multiply blend needs a light base
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     window.addEventListener("resize", sizeCanvas);
 
     animId = requestAnimationFrame(tick);
@@ -38,37 +41,38 @@ Poke_Mystery.environment = (function() {
   function tick() {
     if (!ctx) return;
 
-    // Fade existing drops — draw a near-transparent white veil over the whole canvas.
-    // Over many frames this creates a soft ghost trail as old drops dissolve.
-    // Clear canvas fully each frame and redraw active drops.
-    // Source-over prevents the moire/banding from additive blending.
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Fill with white — multiply blend needs a light base to darken.
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "rgba(255,255,255,0.012)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw drops with multiply blending — overlapping drops compound like real ink.
+    ctx.globalCompositeOperation = "multiply";
 
     for (var i = drops.length - 1; i >= 0; i--) {
       var d = drops[i];
       d.age++;
 
-      // Expand radius, fade alpha
-      var progress = d.age / d.lifespan;
-      d.radius = d.startRadius + (d.maxRadius - d.startRadius) * progress;
-      d.alpha = d.startAlpha * (1 - progress);
+      // Expand radius — fast initial spread, then slow
+      d.radius = d.startRadius + (d.maxRadius - d.startRadius) * Math.min(1, t * 1.6);
+      d.alpha = d.startAlpha * (1 - t);
 
-      if (d.alpha <= 0.005) {
+      if (d.alpha <= 0.003) {
         drops.splice(i, 1);
         continue;
       }
 
-      // Sine-wave drift for organic swirling
-      var driftX = Math.sin(d.age * 0.02 + d.phase) * 0.3;
-      var driftY = Math.cos(d.age * 0.025 + d.phase) * 0.3;
+      // Sine-wave drift
+      var driftX = Math.sin(d.age * 0.03 + d.phase) * 0.5;
+      var driftY = Math.cos(d.age * 0.035 + d.phase) * 0.5;
       d.x += driftX;
       d.y += driftY;
 
-      // Radial gradient: hard center, soft edge — like an ink drop
+      // Radial gradient: hard center, soft edge
       var grad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
       var c = "hsla(" + d.hue + ", " + d.sat + "%, " + d.light + "%, " + d.alpha.toFixed(3) + ")";
       grad.addColorStop(0, c);
-      grad.addColorStop(0.3, c);
+      grad.addColorStop(0.25, c);
       grad.addColorStop(1, "transparent");
 
       ctx.fillStyle = grad;
@@ -139,12 +143,12 @@ Poke_Mystery.environment = (function() {
       hue: hue,
       sat: sat,
       light: light,
-      startRadius: 5 + Math.random() * 15,
-      maxRadius: 120 + Math.random() * 200,
-      startAlpha: 0.2 + Math.random() * 0.25,
+      startRadius: 30 + Math.random() * 30,
+      maxRadius: 250 + Math.random() * 350,
+      startAlpha: 0.25 + Math.random() * 0.3,
       alpha: 0,
       age: 0,
-      lifespan: 400 + Math.random() * 400, // frames (~7-13 sec at 60fps)
+      lifespan: 250 + Math.random() * 250, // frames (~4-8 sec at 60fps)
       phase: Math.random() * Math.PI * 2
     });
   }
@@ -155,7 +159,8 @@ Poke_Mystery.environment = (function() {
     drops = [];
     if (ctx && canvas) {
       ctx.globalCompositeOperation = "source-over";
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     if (body) {
       body.style.background = "";
