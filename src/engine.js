@@ -70,39 +70,55 @@ Poke_Mystery.engine = (function() {
   }
 
   // --- Diversified trio selection ---
+  // Weighted random draw from top candidates so dense-cluster Pokémon
+  // (starters, early-route) get a fair shot alongside extreme outliers.
+
+  function weightedPick(candidates, weightFn) {
+    var total = 0;
+    var weights = [];
+    candidates.forEach(function(c, i) {
+      var w = Math.max(0, weightFn(c, i));
+      weights.push(w);
+      total += w;
+    });
+    if (total <= 0) return candidates[0];
+    var roll = Math.random() * total;
+    var cum = 0;
+    for (var i = 0; i < candidates.length; i++) {
+      cum += weights[i];
+      if (roll <= cum) return candidates[i];
+    }
+    return candidates[candidates.length - 1];
+  }
 
   function selectTrio(userVector, pokemonData, aestheticPrefs) {
     var scored = scoreAll(userVector, pokemonData);
 
-    var mirror = scored[0].pokemon;
+    // Mirror: weighted random from top 25, weight = 1/(rank+2)
+    var mirrorCandidates = scored.slice(0, Math.min(25, scored.length));
+    var mirror = weightedPick(mirrorCandidates, function(c, i) {
+      return 1 / (i + 2);
+    }).pokemon;
 
-    var shadowCandidates = scored.slice(5, Math.min(40, scored.length));
-    var bestShadow = null;
-    var bestShadowScore = -Infinity;
-
-    shadowCandidates.forEach(function(s) {
-      var distFromMirror = axisDistance(mirror.coords, s.pokemon.coords);
-      var score = distFromMirror * 0.7 - s.distance * 0.3;
-      if (score > bestShadowScore) {
-        bestShadowScore = score;
-        bestShadow = s.pokemon;
-      }
+    // Shadow: weighted random from rank 5-40, weighted by distance-from-mirror
+    var shadowPool = scored.slice(5, Math.min(40, scored.length));
+    var shadowWeights = shadowPool.map(function(s) {
+      return axisDistance(mirror.coords, s.pokemon.coords);
     });
+    var bestShadow = weightedPick(shadowPool, function(s, i) {
+      return shadowWeights[i];
+    }).pokemon;
 
-    var strangerCandidates = scored.slice(15, Math.min(80, scored.length));
-    var bestStranger = null;
-    var bestStrangerScore = -Infinity;
-
-    strangerCandidates.forEach(function(s) {
-      var distFromMirror = axisDistance(mirror.coords, s.pokemon.coords);
-      var distFromShadow = axisDistance(bestShadow.coords, s.pokemon.coords);
-      var minDist = Math.min(distFromMirror, distFromShadow);
-      var score = minDist * 0.7 - s.distance * 0.3;
-      if (score > bestStrangerScore) {
-        bestStrangerScore = score;
-        bestStranger = s.pokemon;
-      }
+    // Stranger: weighted random from rank 15-80, weighted by min-dist-from-both
+    var strangerPool = scored.slice(15, Math.min(80, scored.length));
+    var strangerWeights = strangerPool.map(function(s) {
+      var dM = axisDistance(mirror.coords, s.pokemon.coords);
+      var dS = axisDistance(bestShadow.coords, s.pokemon.coords);
+      return Math.min(dM, dS);
     });
+    var bestStranger = weightedPick(strangerPool, function(s, i) {
+      return strangerWeights[i];
+    }).pokemon;
 
     var trio = [mirror, bestShadow, bestStranger];
 

@@ -153,29 +153,20 @@ Poke_Mystery.main = (function() {
   function showBriefcase() {
     state.phase = "briefcase";
     ui.showBriefcase(function() {
-      showTrio();
+      showPokeballReveal();
     });
   }
 
-  function showTrio() {
-    state.phase = "trio";
-    ui.showTrio(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
-      ui.showPokeballConfirm(pokemon, state.trio, state.trioPhrases, state.shinyIndex, function(finalPick) {
-        choosePokemon(finalPick);
+  function showPokeballReveal() {
+    state.phase = "pokeballs";
+    ui.showPokeballReveal(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
+      state.chosenPokemon = pokemon;
+      var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
+      state.isShiny = pickedShinyCard || engine.shinyRoll();
+      state.phase = "chosen";
+      ui.showShinyRoll(pokemon, state.isShiny, function() {
+        startQuiz();
       });
-    });
-  }
-
-  function choosePokemon(pokemon) {
-    state.chosenPokemon = pokemon;
-    // If they picked the shiny card from the trio, it's a guaranteed shiny.
-    // Otherwise roll the 1-in-10 personal shiny chance.
-    var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
-    state.isShiny = pickedShinyCard || engine.shinyRoll();
-    state.phase = "chosen";
-
-    ui.showShinyRoll(pokemon, state.isShiny, function() {
-      startQuiz();
     });
   }
 

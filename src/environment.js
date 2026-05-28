@@ -40,12 +40,9 @@ Poke_Mystery.environment = (function() {
 
     // Fade existing drops — draw a near-transparent white veil over the whole canvas.
     // Over many frames this creates a soft ghost trail as old drops dissolve.
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(255,255,255,0.012)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw drops with additive blending
-    ctx.globalCompositeOperation = "lighter";
+    // Clear canvas fully each frame and redraw active drops.
+    // Source-over prevents the moire/banding from additive blending.
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = drops.length - 1; i >= 0; i--) {
       var d = drops[i];
@@ -115,8 +112,8 @@ Poke_Mystery.environment = (function() {
 
     body.style.background = grad;
 
-    // Spawn an ink drop from the blended hue
-    spawnDrop(hue1, sat, Math.round(light + 5));
+    // Spawn an ink drop — richer colour, lower lightness than the background
+    spawnDrop(hue1, Math.round(sat * 1.8), Math.round(light * 0.5));
   }
 
   function spawnDrop(hue, sat, light) {
@@ -129,7 +126,7 @@ Poke_Mystery.environment = (function() {
       light: light,
       startRadius: 5 + Math.random() * 15,
       maxRadius: 120 + Math.random() * 200,
-      startAlpha: 0.15 + Math.random() * 0.2,
+      startAlpha: 0.2 + Math.random() * 0.25,
       alpha: 0,
       age: 0,
       lifespan: 400 + Math.random() * 400, // frames (~7-13 sec at 60fps)

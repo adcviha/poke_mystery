@@ -219,9 +219,9 @@ body {
   font-style: italic;
 }
 
-/* --- Trio --- */
+/* --- Pokéball reveal --- */
 
-.trio-wrapper {
+.reveal-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -229,67 +229,160 @@ body {
   animation: fadeIn 0.8s ease;
 }
 
-.trio-title {
+.reveal-title {
   font-size: 0.9rem;
   color: #777;
   font-style: italic;
 }
 
-.trio-cards {
+.reveal-balls {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   justify-content: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
-.pokemon-card {
+/* --- Ball wrap (each column) --- */
+
+.ball-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.25rem;
-  background: rgba(255,255,255,0.6);
-  border: 1px solid #d5d5d5;
-  border-radius: 12px;
+  gap: 0.4rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  width: 170px;
+  transition: transform 0.25s;
+  max-width: 200px;
 }
 
-.pokemon-card:hover {
+.ball-wrap:hover {
+  transform: translateY(-2px);
+}
+
+.ball-wrap.open {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-  background: rgba(255,255,255,0.85);
 }
 
-.card-artwork {
-  width: 120px;
-  height: 120px;
+/* --- The Poké Ball itself --- */
+
+.ball {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ball-bottom, #f0f0f0);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+}
+
+.ball-top {
+  position: absolute;
+  inset: 0 0 50% 0;
+  background: linear-gradient(180deg, var(--ball-top, #e04040) 0%, var(--ball-top, #e04040) 100%);
+}
+
+.ball-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 7px;
+  background: #2a2a2a;
+  z-index: 2;
+}
+
+.ball-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f8f8f8;
+  border: 3px solid #2a2a2a;
+  z-index: 3;
+}
+
+.ball-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 33%,
+    rgba(255,255,255,0.35) 0%,
+    transparent 45%,
+    rgba(0,0,0,0.1) 100%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* --- Ball labels --- */
+
+.ball-genus {
+  font-size: 0.7rem;
+  color: #999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+.ball-hint {
+  font-size: 0.72rem;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+  max-width: 160px;
+}
+
+.ball-role {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.68rem;
+  color: #aaa;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- Open state (peeking) --- */
+
+.ball-wrap.open .ball {
+  margin-bottom: 0.5rem;
+}
+
+.ball-artwork {
+  width: 140px;
+  height: 140px;
   object-fit: contain;
+  animation: peekUp 0.5s ease;
+  margin-top: 0.25rem;
 }
 
-.card-name-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+@keyframes peekUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.card-name {
-  font-size: 1rem;
+.ball-name {
+  font-size: 1.15rem;
   font-weight: bold;
   color: #444;
 }
 
-.card-shiny-star {
-  font-size: 0.85rem;
-  color: #c9a84c;
-  line-height: 1;
+.ball-flavor {
+  font-size: 0.78rem;
+  color: #777;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 180px;
 }
 
-.card-genus {
+.ball-prompt {
   font-size: 0.7rem;
-  color: #999;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #b8860b;
+  font-style: italic;
+  animation: gentlePulse 1.5s ease-in-out infinite;
 }
 
 /* --- Shiny reveal --- */
@@ -392,169 +485,6 @@ body {
   font-style: italic;
 }
 
-/* --- Trio cards — center layout --- */
-
-.trio-cards {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.trio-center {
-  transform: scale(1.05);
-}
-
-.trio-center:hover {
-  transform: scale(1.08) translateY(-4px);
-}
-
-/* --- Card arrival phrase --- */
-
-.card-phrase {
-  font-size: 0.72rem;
-  color: #999;
-  font-style: italic;
-  text-align: center;
-  line-height: 1.4;
-  margin-top: 0.25rem;
-  max-width: 140px;
-}
-
-/* --- Pokéball confirmation --- */
-
-.confirm-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  animation: fadeIn 0.6s ease;
-}
-
-.confirm-title {
-  font-size: 1.1rem;
-  color: #666;
-  font-style: italic;
-}
-
-.confirm-balls {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.pokeball-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.25s;
-}
-
-.pokeball-wrap:hover {
-  transform: translateY(-3px);
-}
-
-.pokeball-wrap.selected {
-  transform: translateY(-6px);
-}
-
-.pokeball {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  transition: box-shadow 0.3s;
-}
-
-.pokeball-wrap.selected .pokeball {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.22);
-}
-
-.pokeball-top {
-  position: absolute;
-  inset: 0 0 50% 0;
-  background: linear-gradient(180deg, #e85d5d 0%, #c94444 100%);
-}
-
-.pokeball-bottom {
-  position: absolute;
-  inset: 50% 0 0 0;
-  background: linear-gradient(180deg, #f0f0f0 0%, #dadada 100%);
-}
-
-.pokeball-band {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.pokeball-band::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: #3a3a3a;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.pokeball-btn {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #f5f5f5;
-  border: 3px solid #3a3a3a;
-  position: relative;
-  z-index: 1;
-  transition: background 0.3s;
-}
-
-.pokeball-wrap.selected .pokeball-btn {
-  background: #ffd700;
-}
-
-.shiny-ball .pokeball-top {
-  background: linear-gradient(180deg, #f0c060 0%, #c9a84c 100%);
-}
-
-.pokeball-peek {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  animation: peekUp 0.5s ease;
-}
-
-@keyframes peekUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.pokeball-label {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.72rem;
-  color: #999;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.pokeball-confirm {
-  font-size: 0.7rem;
-  color: #b8860b;
-  font-style: italic;
-  animation: gentlePulse 1.5s ease-in-out infinite;
-}
-
 .aesthetic-screen {
   text-align: center;
   gap: 1.5rem;
@@ -574,9 +504,8 @@ body {
   html { font-size: 16px; }
   body { padding: 1rem; }
   .question-text { font-size: 1.05rem; }
-  .trio-cards { flex-direction: column; align-items: center; }
-  .pokemon-card { width: 100%; max-width: 240px; }
-  .card-artwork { width: 100px; height: 100px; }
+  .reveal-balls { flex-direction: column; align-items: center; }
+  .ball-artwork { width: 110px; height: 110px; }
 }
   </style>
 </head>
@@ -1735,39 +1664,55 @@ Poke_Mystery.engine = (function() {
   }
 
   // --- Diversified trio selection ---
+  // Weighted random draw from top candidates so dense-cluster Pokémon
+  // (starters, early-route) get a fair shot alongside extreme outliers.
+
+  function weightedPick(candidates, weightFn) {
+    var total = 0;
+    var weights = [];
+    candidates.forEach(function(c, i) {
+      var w = Math.max(0, weightFn(c, i));
+      weights.push(w);
+      total += w;
+    });
+    if (total <= 0) return candidates[0];
+    var roll = Math.random() * total;
+    var cum = 0;
+    for (var i = 0; i < candidates.length; i++) {
+      cum += weights[i];
+      if (roll <= cum) return candidates[i];
+    }
+    return candidates[candidates.length - 1];
+  }
 
   function selectTrio(userVector, pokemonData, aestheticPrefs) {
     var scored = scoreAll(userVector, pokemonData);
 
-    var mirror = scored[0].pokemon;
+    // Mirror: weighted random from top 25, weight = 1/(rank+2)
+    var mirrorCandidates = scored.slice(0, Math.min(25, scored.length));
+    var mirror = weightedPick(mirrorCandidates, function(c, i) {
+      return 1 / (i + 2);
+    }).pokemon;
 
-    var shadowCandidates = scored.slice(5, Math.min(40, scored.length));
-    var bestShadow = null;
-    var bestShadowScore = -Infinity;
-
-    shadowCandidates.forEach(function(s) {
-      var distFromMirror = axisDistance(mirror.coords, s.pokemon.coords);
-      var score = distFromMirror * 0.7 - s.distance * 0.3;
-      if (score > bestShadowScore) {
-        bestShadowScore = score;
-        bestShadow = s.pokemon;
-      }
+    // Shadow: weighted random from rank 5-40, weighted by distance-from-mirror
+    var shadowPool = scored.slice(5, Math.min(40, scored.length));
+    var shadowWeights = shadowPool.map(function(s) {
+      return axisDistance(mirror.coords, s.pokemon.coords);
     });
+    var bestShadow = weightedPick(shadowPool, function(s, i) {
+      return shadowWeights[i];
+    }).pokemon;
 
-    var strangerCandidates = scored.slice(15, Math.min(80, scored.length));
-    var bestStranger = null;
-    var bestStrangerScore = -Infinity;
-
-    strangerCandidates.forEach(function(s) {
-      var distFromMirror = axisDistance(mirror.coords, s.pokemon.coords);
-      var distFromShadow = axisDistance(bestShadow.coords, s.pokemon.coords);
-      var minDist = Math.min(distFromMirror, distFromShadow);
-      var score = minDist * 0.7 - s.distance * 0.3;
-      if (score > bestStrangerScore) {
-        bestStrangerScore = score;
-        bestStranger = s.pokemon;
-      }
+    // Stranger: weighted random from rank 15-80, weighted by min-dist-from-both
+    var strangerPool = scored.slice(15, Math.min(80, scored.length));
+    var strangerWeights = strangerPool.map(function(s) {
+      var dM = axisDistance(mirror.coords, s.pokemon.coords);
+      var dS = axisDistance(bestShadow.coords, s.pokemon.coords);
+      return Math.min(dM, dS);
     });
+    var bestStranger = weightedPick(strangerPool, function(s, i) {
+      return strangerWeights[i];
+    }).pokemon;
 
     var trio = [mirror, bestShadow, bestStranger];
 
@@ -2097,12 +2042,9 @@ Poke_Mystery.environment = (function() {
 
     // Fade existing drops — draw a near-transparent white veil over the whole canvas.
     // Over many frames this creates a soft ghost trail as old drops dissolve.
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(255,255,255,0.012)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw drops with additive blending
-    ctx.globalCompositeOperation = "lighter";
+    // Clear canvas fully each frame and redraw active drops.
+    // Source-over prevents the moire/banding from additive blending.
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = drops.length - 1; i >= 0; i--) {
       var d = drops[i];
@@ -2172,8 +2114,8 @@ Poke_Mystery.environment = (function() {
 
     body.style.background = grad;
 
-    // Spawn an ink drop from the blended hue
-    spawnDrop(hue1, sat, Math.round(light + 5));
+    // Spawn an ink drop — richer colour, lower lightness than the background
+    spawnDrop(hue1, Math.round(sat * 1.8), Math.round(light * 0.5));
   }
 
   function spawnDrop(hue, sat, light) {
@@ -2186,7 +2128,7 @@ Poke_Mystery.environment = (function() {
       light: light,
       startRadius: 5 + Math.random() * 15,
       maxRadius: 120 + Math.random() * 200,
-      startAlpha: 0.15 + Math.random() * 0.2,
+      startAlpha: 0.2 + Math.random() * 0.25,
       alpha: 0,
       age: 0,
       lifespan: 400 + Math.random() * 400, // frames (~7-13 sec at 60fps)
@@ -2367,145 +2309,138 @@ Poke_Mystery.ui = (function() {
     container.appendChild(screen);
   }
 
-  // --- Trio reveal ---
+  // --- Pokéball reveal ---
+  // Three closed Poké Balls appear. Genus + type hint shown before opening.
+  // Click a ball to peek at the Pokémon + flavour text. Click again to lock in.
+  // No shiny indication until after the choice is locked.
 
-  function showTrio(trio, phrases, shinyIndex, onChoose) {
-    var screen = document.querySelector(".briefcase-screen");
-    if (!screen) return;
-    clear(screen);
+  var TYPE_HINTS = {
+    fire: "The ball is warm to the touch.",
+    water: "The ball is slick with seawater.",
+    electric: "The ball crackles faintly with static.",
+    grass: "The ball smells of fresh leaves and damp earth.",
+    ice: "The ball is cold enough to fog your breath.",
+    ghost: "The ball shimmers with an eerie, distant light.",
+    psychic: "The ball hums — not audibly. Just... a feeling.",
+    dragon: "The ball thrums with something ancient.",
+    dark: "The ball drinks in the light around it.",
+    fairy: "The ball glimmers with a soft, playful light.",
+    fighting: "The ball vibrates with restrained force.",
+    flying: "The ball feels lighter than it should.",
+    poison: "The ball tingles faintly against your fingertips.",
+    ground: "The ball is heavy. Soil and stone heavy.",
+    rock: "The ball is solid, unyielding. Ancient.",
+    bug: "The ball buzzes, just barely. Or maybe it's your pulse.",
+    steel: "The ball is cool, precise. Machined.",
+    normal: "The ball rests quietly. Unassuming. Content."
+  };
 
-    var wrapper = el("div", "trio-wrapper");
-    var title = el("div", "trio-title", "Three Pok&eacute; Balls lie inside...");
-    wrapper.appendChild(title);
-
-    var cards = el("div", "trio-cards");
-
-    // Layout: mirror(0)=center, shadow(1)=left, stranger(2)=right
-    var order = [1, 0, 2]; // shadow, mirror, stranger
-    var positions = ["trio-left", "trio-center", "trio-right"];
-
-    order.forEach(function(origIdx, displayIdx) {
-      var pokemon = trio[origIdx];
-      var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
-      var isShinyCard = (origIdx === shinyIndex);
-
-      var card = el("div", "pokemon-card " + positions[displayIdx]);
-
-      var img = el("img", "card-artwork");
-      img.src = isShinyCard ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
-      img.alt = pokemon.name;
-      img.loading = "lazy";
-
-      var nameWrap = el("div", "card-name-wrap");
-      var name = el("span", "card-name", capitalise(pokemon.name));
-      nameWrap.appendChild(name);
-      if (isShinyCard) {
-        var star = el("span", "card-shiny-star", "★");
-        nameWrap.appendChild(star);
-      }
-
-      var genus = el("div", "card-genus", pokemon.genus || "");
-      var phraseDiv = el("div", "card-phrase", phrase);
-
-      card.appendChild(img);
-      card.appendChild(nameWrap);
-      card.appendChild(genus);
-      card.appendChild(phraseDiv);
-
-      card.addEventListener("click", function() {
-        onChoose(pokemon);
-      });
-
-      cards.appendChild(card);
-    });
-
-    wrapper.appendChild(cards);
-    screen.appendChild(wrapper);
-  }
-
-  // --- Pokéball confirmation ---
+  var BALL_TYPES = [
+    { name: "poke",    top: "#e04040", bottom: "#f0f0f0" },
+    { name: "great",   top: "#3878d8", bottom: "#f0f0f0" },
+    { name: "ultra",   top: "#f8c040", bottom: "#f0f0f0" },
+    { name: "master",  top: "#7838c8", bottom: "#f0f0f0" },
+    { name: "safari",  top: "#78a050", bottom: "#f0f0f0" },
+    { name: "moon",    top: "#3868c0", bottom: "#f0f0f0" },
+    { name: "love",    top: "#f08098", bottom: "#f0f0f0" },
+    { name: "heavy",   top: "#485868", bottom: "#c0c8d0" },
+    { name: "luxury",  top: "#181820", bottom: "#f0f0f0" },
+    { name: "premier", top: "#f0f0f0", bottom: "#f0f0f0" }
+  ];
 
   var ROLE_LABELS = ["your mirror", "your shadow", "your stranger"];
 
-  function showPokeballConfirm(initialPick, trio, phrases, shinyIndex, onConfirm) {
+  function pickBallTypes() {
+    var pool = BALL_TYPES.slice();
+    for (var i = pool.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    return pool.slice(0, 3);
+  }
+
+  function renderBall(ballType) {
+    var ball = el("div", "ball");
+    ball.style.setProperty("--ball-top", ballType.top);
+    ball.style.setProperty("--ball-bottom", ballType.bottom);
+    var top = el("div", "ball-top");
+    var band = el("div", "ball-band");
+    var btn = el("div", "ball-btn");
+    var shine = el("div", "ball-shine");
+    ball.appendChild(top);
+    ball.appendChild(band);
+    ball.appendChild(btn);
+    ball.appendChild(shine);
+    return ball;
+  }
+
+  function showPokeballReveal(trio, phrases, shinyIndex, onLockIn) {
     var screen = document.querySelector(".briefcase-screen");
     if (!screen) return;
     clear(screen);
 
-    var wrapper = el("div", "confirm-wrapper");
-
-    var title = el("div", "confirm-title", "Your choice is...");
+    var ballTypes = pickBallTypes();
+    var wrapper = el("div", "reveal-wrapper");
+    var title = el("div", "reveal-title", "Three Poké Balls lie inside...");
     wrapper.appendChild(title);
 
-    var ballsRow = el("div", "confirm-balls");
+    var ballsRow = el("div", "reveal-balls");
+    var openedIndex = -1;
+    var order = [1, 0, 2]; // shadow, mirror, stranger
 
-    // Layout: shadow(1)=left, mirror(0)=center, stranger(2)=right
-    var order = [1, 0, 2];
-    var chosenIdx = -1;
-    for (var i = 0; i < 3; i++) {
-      if (trio[order[i]] === initialPick) { chosenIdx = i; break; }
-    }
-
-    var selectedDisplayIdx = chosenIdx;
-
-    function renderBalls(selectedIdx) {
+    function render() {
       clear(ballsRow);
 
       order.forEach(function(origIdx, displayIdx) {
         var pokemon = trio[origIdx];
-        var isSelected = (displayIdx === selectedIdx);
-        var isShinyBall = (origIdx === shinyIndex);
+        var phrase = (phrases && phrases[origIdx]) ? phrases[origIdx] : "";
+        var ballType = ballTypes[displayIdx];
+        var isOpen = (displayIdx === openedIndex);
+        var roleLabel = ROLE_LABELS[origIdx];
+        var primaryType = (pokemon.types && pokemon.types[0]) ? pokemon.types[0] : "normal";
+        var typeHint = TYPE_HINTS[primaryType] || TYPE_HINTS["normal"];
 
-        var ballWrap = el("div", "pokeball-wrap" + (isSelected ? " selected" : ""));
+        var wrap = el("div", "ball-wrap" + (isOpen ? " open" : ""));
 
-        // Pokéball
-        var ball = el("div", "pokeball" + (isShinyBall ? " shiny-ball" : ""));
-        var ballTop = el("div", "pokeball-top");
-        var ballBottom = el("div", "pokeball-bottom");
-        var ballBand = el("div", "pokeball-band");
-        var ballBtn = el("div", "pokeball-btn");
-        ballBand.appendChild(ballBtn);
-        ball.appendChild(ballTop);
-        ball.appendChild(ballBottom);
-        ball.appendChild(ballBand);
+        if (!isOpen) {
+          // Closed state: ball sprite + genus + type hint + role
+          wrap.appendChild(renderBall(ballType));
+          wrap.appendChild(el("div", "ball-genus", pokemon.genus || ""));
+          wrap.appendChild(el("div", "ball-hint", typeHint));
+          wrap.appendChild(el("div", "ball-role", roleLabel));
 
-        // Pokémon peeking out when selected
-        if (isSelected) {
-          var peek = el("img", "pokeball-peek");
-          peek.src = isShinyBall ? (pokemon.artwork_shiny_url || pokemon.artwork_url) : (pokemon.artwork_url || "");
-          peek.alt = pokemon.name;
-          ballWrap.appendChild(peek);
-          ball.classList.add("open");
+          wrap.addEventListener("click", function() {
+            openedIndex = displayIdx;
+            render();
+          });
+        } else {
+          // Open state: artwork + name + flavour text + lock-in prompt
+          var art = el("img", "ball-artwork");
+          art.src = pokemon.artwork_url || "";
+          art.alt = pokemon.name;
+          art.loading = "lazy";
+
+          var nameEl = el("div", "ball-name", capitalise(pokemon.name));
+          var flavor = el("div", "ball-flavor", phrase);
+          var prompt = el("div", "ball-prompt", "Click again to choose");
+          var role = el("div", "ball-role", roleLabel);
+
+          wrap.appendChild(art);
+          wrap.appendChild(nameEl);
+          wrap.appendChild(flavor);
+          wrap.appendChild(prompt);
+          wrap.appendChild(role);
+
+          wrap.addEventListener("click", function() {
+            onLockIn(pokemon);
+          });
         }
 
-        ballWrap.appendChild(ball);
-
-        // Role label
-        var label = el("div", "pokeball-label", ROLE_LABELS[origIdx]);
-        ballWrap.appendChild(label);
-
-        // Confirm prompt on selected
-        if (isSelected) {
-          var prompt = el("div", "pokeball-confirm", "Click again to choose");
-          ballWrap.appendChild(prompt);
-        }
-
-        ballWrap.addEventListener("click", function() {
-          if (isSelected) {
-            // Confirm this choice
-            onConfirm(pokemon);
-          } else {
-            // Switch selection
-            renderBalls(displayIdx);
-          }
-        });
-
-        ballsRow.appendChild(ballWrap);
+        ballsRow.appendChild(wrap);
       });
     }
 
-    renderBalls(selectedDisplayIdx);
-
+    render();
     wrapper.appendChild(ballsRow);
     screen.appendChild(wrapper);
   }
@@ -2591,8 +2526,7 @@ Poke_Mystery.ui = (function() {
     showAestheticQuestion: showAestheticQuestion,
     showYouAre: showYouAre,
     showBriefcase: showBriefcase,
-    showTrio: showTrio,
-    showPokeballConfirm: showPokeballConfirm,
+    showPokeballReveal: showPokeballReveal,
     showShinyRoll: showShinyRoll,
     updateEnvironment: updateEnvironment
   };
@@ -2755,29 +2689,20 @@ Poke_Mystery.main = (function() {
   function showBriefcase() {
     state.phase = "briefcase";
     ui.showBriefcase(function() {
-      showTrio();
+      showPokeballReveal();
     });
   }
 
-  function showTrio() {
-    state.phase = "trio";
-    ui.showTrio(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
-      ui.showPokeballConfirm(pokemon, state.trio, state.trioPhrases, state.shinyIndex, function(finalPick) {
-        choosePokemon(finalPick);
+  function showPokeballReveal() {
+    state.phase = "pokeballs";
+    ui.showPokeballReveal(state.trio, state.trioPhrases, state.shinyIndex, function(pokemon) {
+      state.chosenPokemon = pokemon;
+      var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
+      state.isShiny = pickedShinyCard || engine.shinyRoll();
+      state.phase = "chosen";
+      ui.showShinyRoll(pokemon, state.isShiny, function() {
+        startQuiz();
       });
-    });
-  }
-
-  function choosePokemon(pokemon) {
-    state.chosenPokemon = pokemon;
-    // If they picked the shiny card from the trio, it's a guaranteed shiny.
-    // Otherwise roll the 1-in-10 personal shiny chance.
-    var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
-    state.isShiny = pickedShinyCard || engine.shinyRoll();
-    state.phase = "chosen";
-
-    ui.showShinyRoll(pokemon, state.isShiny, function() {
-      startQuiz();
     });
   }
 
