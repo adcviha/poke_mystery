@@ -76,7 +76,7 @@ Poke_Mystery.main = (function() {
 
   function answerQuestion(weight) {
     state.userVector = engine.accumulate(state.userVector, weight);
-    env.update(state.userVector);
+    env.update(state.userVector, weight);
     state.currentQuestionIndex++;
 
     showNextQuestion();

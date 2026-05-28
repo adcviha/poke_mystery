@@ -80,27 +80,41 @@ Poke_Mystery.environment = (function() {
     animId = requestAnimationFrame(tick);
   }
 
-  // --- Spawn a drop from the current vector ---
+  // --- Per-axis drop colours ---
+  // Each axis gets a base hue; answer direction shifts it warmer or cooler.
 
-  function update(vector) {
+  var AXIS_HUES = { reach: 240, tempo: 30, nature: 130, tether: 340, aura: 50 };
+
+  function axisDropColor(weight) {
+    var axes = ["reach", "tempo", "nature", "tether", "aura"];
+    var bestAxis = "reach";
+    var bestVal = 0;
+    axes.forEach(function(a) {
+      if (Math.abs(weight[a] || 0) > Math.abs(bestVal)) { bestVal = weight[a] || 0; bestAxis = a; }
+    });
+    var hue = (AXIS_HUES[bestAxis] || 200) + (bestVal > 0 ? 35 : -35);
+    var sat = 60 + Math.abs(bestVal) * 4;
+    var light = 45 + Math.random() * 10;
+    return { hue: Math.round(hue), sat: Math.round(sat), light: Math.round(light) };
+  }
+
+  // --- Spawn a drop driven by the question axis, CSS gradient by the cumulative vector ---
+
+  function update(vector, weight) {
     if (!body) return;
 
-    // Normalize accumulated vector
+    // Normalize accumulated vector (for the CSS background)
     var normDiv = 3;
     var r = vector[0] / normDiv;
     var t = vector[1] / normDiv;
     var n = vector[2] / normDiv;
-    var th = vector[3] / normDiv;
     var a = vector[4] / normDiv;
 
-    // Hue/saturation/lightness from the 5D vector
     var hueReach = 100 + r * 12;
     var hueTempo = 200 - t * 15;
     var natureSat = 0.4 + n * 0.06;
-    var tetherWarmth = 0.5 - th * 0.05;
     var auraBrightness = 0.85 + a * 0.03;
 
-    // Composite background gradient (unchanged)
     var hue1 = Math.round((hueReach + hueTempo) / 2);
     var hue2 = Math.round(hueReach);
     var sat = Math.round(natureSat * 100);
@@ -112,8 +126,9 @@ Poke_Mystery.environment = (function() {
 
     body.style.background = grad;
 
-    // Spawn an ink drop — richer colour, lower lightness than the background
-    spawnDrop(hue1, Math.round(sat * 1.8), Math.round(light * 0.5));
+    // Drop colour comes from the question's axis, not the cumulative vector
+    var dc = weight ? axisDropColor(weight) : { hue: hue1, sat: Math.round(sat * 1.8), light: Math.round(light * 0.5) };
+    spawnDrop(dc.hue, dc.sat, dc.light);
   }
 
   function spawnDrop(hue, sat, light) {
