@@ -17,13 +17,81 @@ Poke_Mystery.main = (function() {
     shinyIndex: 0,             // which trio card shows shiny (0, 1, or 2)
     chosenPokemon: null,
     isShiny: false,
-    aestheticPrefs: {}         // accumulated from aesthetic probe
+    aestheticPrefs: {},        // accumulated from aesthetic probe
+    explore: {                 // exploration mini-game state (persisted)
+      steps: 0,
+      balls: 0,
+      pokedex: {},             // { id: {s:bool, c:bool} }
+      pairs: {},               // per-axis-pair state: visited bitset + player pos
+      currentPair: 0
+    }
   };
 
   var pokemonData = [];
   var engine = Poke_Mystery.engine;
   var ui = Poke_Mystery.ui;
   var env = Poke_Mystery.environment;
+
+  // --- Exploration persistence ---
+
+  var EXPLORE_STORAGE_KEY = "poke_mystery_explore_v1";
+
+  function loadExplorationState() {
+    try {
+      var raw = localStorage.getItem(EXPLORE_STORAGE_KEY);
+      if (raw) {
+        var saved = JSON.parse(raw);
+        if (saved.steps !== undefined) state.explore.steps = saved.steps;
+        if (saved.balls !== undefined) state.explore.balls = saved.balls;
+        if (saved.pokedex) state.explore.pokedex = saved.pokedex;
+        if (saved.pairs) state.explore.pairs = saved.pairs;
+        if (saved.currentPair !== undefined) state.explore.currentPair = saved.currentPair;
+      }
+    } catch(e) {
+      // Corrupted storage — start fresh
+    }
+  }
+
+  function saveExplorationState() {
+    try {
+      var exp = state.explore;
+      var data = {
+        steps: exp.steps,
+        balls: exp.balls,
+        pokedex: exp.pokedex,
+        pairs: exp.pairs,
+        currentPair: exp.currentPair
+      };
+      localStorage.setItem(EXPLORE_STORAGE_KEY, JSON.stringify(data));
+    } catch(e) {
+      // localStorage full or unavailable — silently continue
+    }
+  }
+
+  function onExplorePersist() {
+    // Called by explore.js after moves/catches
+    if (Poke_Mystery.explore) {
+      var expState = Poke_Mystery.explore.getExplorationState();
+      state.explore.steps = expState.steps;
+      state.explore.balls = expState.balls;
+      state.explore.pokedex = expState.pokedex;
+      state.explore.currentPair = expState.currentPair;
+      if (expState.pairs) {
+        state.explore.pairs[expState.currentPair] = {
+          visited: expState.pairs.currentVisited,
+          playerTX: expState.pairs.playerTX,
+          playerTY: expState.pairs.playerTY
+        };
+      }
+      saveExplorationState();
+    }
+  }
+
+  function awardQuizRewards() {
+    state.explore.steps += 20 + Math.floor(Math.random() * 61);  // 20-80
+    state.explore.balls += 1 + Math.floor(Math.random() * 5);     // 1-5
+    saveExplorationState();
+  }
 
   // --- Init ---
 
@@ -32,6 +100,7 @@ Poke_Mystery.main = (function() {
     env.init();
 
     pokemonData = (window.POKE_MYSTERY_DATA && window.POKE_MYSTERY_DATA.pokemon) || [];
+    loadExplorationState();
 
     startQuiz();
   }
@@ -164,8 +233,15 @@ Poke_Mystery.main = (function() {
       var pickedShinyCard = (pokemon === state.trio[state.shinyIndex]);
       state.isShiny = pickedShinyCard || engine.shinyRoll();
       state.phase = "chosen";
+
+      // Add chosen Pokémon to Pokédex
+      state.explore.pokedex[pokemon.id] = { s: true, c: true };
+      if (state.isShiny) state.explore.pokedex[pokemon.id].shiny = true;
+
       var chosenIdx = state.trio.indexOf(pokemon);
       var chosenPhrase = (state.trioPhrases && chosenIdx >= 0) ? state.trioPhrases[chosenIdx] : "";
+      saveExplorationState();
+
       ui.showShinyRoll(pokemon, state.isShiny, chosenPhrase, function() {
         showGallery();
       }, function() {
@@ -176,9 +252,27 @@ Poke_Mystery.main = (function() {
 
   function showGallery() {
     state.phase = "gallery";
+    awardQuizRewards();
+
+    // Pass current pair state if saved
+    var exploreState = {
+      steps: state.explore.steps,
+      balls: state.explore.balls,
+      pokedex: state.explore.pokedex,
+      currentPair: state.explore.currentPair,
+      pairs: state.explore.pairs[state.explore.currentPair] || null
+    };
+
     ui.showGallery(state.userVector, state.trio, state.chosenPokemon, pokemonData, function() {
+      // Save state on close before restarting quiz
+      onExplorePersist();
       startQuiz();
-    });
+    }, exploreState);
+
+    // Wire persist callback from main's scope (ui can't see onExplorePersist)
+    if (Poke_Mystery.explore) {
+      Poke_Mystery.explore.setPersistCallback(onExplorePersist);
+    }
   }
 
   // --- Fallback (no JSON data loaded, e.g. raw dev file) ---

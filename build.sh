@@ -42,6 +42,7 @@ print('window.POKE_MYSTERY_DATA = ' + json.dumps(data) + ';')
     engine.js \
     environment.js \
     ui.js \
+    explore.js \
     main.js
   do
     echo "// ===== $js ====="

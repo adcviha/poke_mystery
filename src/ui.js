@@ -329,7 +329,7 @@ Poke_Mystery.ui = (function() {
     screen.appendChild(reveal);
   }
 
-  // --- Gallery star chart ---
+  // --- Gallery / Exploration ---
 
   var AXIS_PAIRS = [
     { x: 0, y: 1 },
@@ -339,78 +339,89 @@ Poke_Mystery.ui = (function() {
     { x: 3, y: 4 }
   ];
 
-  function showGallery(userVector, trio, chosenPokemon, allPokemon, onClose) {
+  var AXIS_SHAPES = ["◆", "▲", "●", "■", "★"];  // ◆ ▲ ● ■ ★
+  var AXIS_HUE_ORDER = ["reach","tempo","nature","tether","aura"];
+
+  function showGallery(userVector, trio, chosenPokemon, allPokemon, onClose, exploreState) {
     var hue = Poke_Mystery.colors.AXIS_HUE;
 
     var overlay = el("div", "gallery-overlay");
     var canvas = el("canvas", "gallery-canvas");
-    var ctx = canvas.getContext("2d");
 
+    // --- Top bar ---
+    var topBar = el("div", "gallery-topbar");
+
+    var dexEl = el("span", "explore-dex", "Seen: 0 / Caught: 0");
+
+    var closeBtn = el("button", "gallery-close", "×");
+    closeBtn.addEventListener("click", onClose);
+
+    topBar.appendChild(dexEl);
+    topBar.appendChild(closeBtn);
+
+    // --- Shape toggle buttons ---
+    var toggles = el("div", "gallery-toggles");
     var currentPair = 0;
 
-    // Symbolic toggle buttons — colored circles
-    var toggles = el("div", "gallery-toggles");
     AXIS_PAIRS.forEach(function(pair, i) {
       var btn = el("button", "gallery-symbtn" + (i === 0 ? " active" : ""));
-      var c1 = el("span", "gallery-symdot");
-      c1.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.x]] + ", 55%, 55%)";
-      var c2 = el("span", "gallery-symdot");
-      c2.style.backgroundColor = "hsl(" + hue[["reach","tempo","nature","tether","aura"][pair.y]] + ", 55%, 55%)";
-      btn.appendChild(c1);
-      btn.appendChild(c2);
+      var shape1 = el("span", "explore-shape");
+      shape1.textContent = AXIS_SHAPES[pair.x];
+      shape1.style.color = "hsl(" + hue[AXIS_HUE_ORDER[pair.x]] + ", 55%, 55%)";
+      var shape2 = el("span", "explore-shape");
+      shape2.textContent = AXIS_SHAPES[pair.y];
+      shape2.style.color = "hsl(" + hue[AXIS_HUE_ORDER[pair.y]] + ", 55%, 55%)";
+      btn.appendChild(shape1);
+      btn.appendChild(shape2);
       btn.addEventListener("click", function() {
         currentPair = i;
         var allBtns = toggles.querySelectorAll(".gallery-symbtn");
         allBtns.forEach(function(t) { t.classList.remove("active"); });
         btn.classList.add("active");
-        drawGallery(canvas, ctx, pair.x, pair.y, userVector, trio, chosenPokemon, allPokemon);
+        if (Poke_Mystery.explore) Poke_Mystery.explore.switchPair(i);
       });
       toggles.appendChild(btn);
     });
 
-    // Close button
-    var closeBtn = el("button", "gallery-close", "×");
-    closeBtn.addEventListener("click", onClose);
-
-    // Placeholder counters
+    // --- Counters ---
     var counters = el("div", "gallery-counters");
-    var stepsEl = el("span", "gallery-counter", "Steps: 0");
-    var ballsEl = el("span", "gallery-counter", "Balls: 0");
+    var stepsEl = el("span", "explore-counter explore-steps", "Steps: 0");
+    var ballsEl = el("span", "explore-counter explore-balls", "Balls: 0");
     counters.appendChild(stepsEl);
     counters.appendChild(ballsEl);
 
-    overlay.appendChild(closeBtn);
+    overlay.appendChild(topBar);
     overlay.appendChild(canvas);
     overlay.appendChild(toggles);
     overlay.appendChild(counters);
     document.body.appendChild(overlay);
 
-    // Escape to close
-    function onKey(e) {
-      if (e.key === "Escape") { onClose(); }
-    }
-    document.addEventListener("keydown", onKey);
+    // --- Cleanup ---
+    var cleaned = false;
 
     function cleanup() {
-      document.removeEventListener("keydown", onKey);
-      window.removeEventListener("resize", resize);
+      if (cleaned) return;
+      cleaned = true;
+      if (Poke_Mystery.explore) Poke_Mystery.explore.destroy();
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }
 
-    // Override onClose to clean up
-    var wrappedClose = function() {
+    function wrappedClose() {
       cleanup();
       onClose();
-    };
+    }
+
     closeBtn.removeEventListener("click", onClose);
     closeBtn.addEventListener("click", wrappedClose);
-    // Also update escape handler
-    document.removeEventListener("keydown", onKey);
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") wrappedClose();
-    });
-    window.addEventListener("resize", resize);
 
+    document.addEventListener("keydown", function escKey(e) {
+      if (e.key === "Escape" && !cleaned) {
+        document.removeEventListener("keydown", escKey);
+        wrappedClose();
+      }
+    });
+
+    // --- Init canvas + explore ---
     function resize() {
       var w = overlay.clientWidth;
       var h = overlay.clientHeight;
@@ -419,105 +430,15 @@ Poke_Mystery.ui = (function() {
       canvas.style.height = h + "px";
       canvas.width = w * dpr;
       canvas.height = h * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-      drawGallery(canvas, ctx, AXIS_PAIRS[currentPair].x, AXIS_PAIRS[currentPair].y,
-        userVector, trio, chosenPokemon, allPokemon);
     }
 
     resize();
-  }
+    window.addEventListener("resize", resize);
 
-  function drawGallery(canvas, ctx, xAxis, yAxis, userVector, trio, chosenPokemon, allPokemon) {
-    var W = canvas.width / (window.devicePixelRatio || 1);
-    var H = canvas.height / (window.devicePixelRatio || 1);
-    if (W <= 0 || H <= 0) return;
-
-    var colors = Poke_Mystery.colors;
-
-    // Dark void
-    ctx.fillStyle = "#080c12";
-    ctx.fillRect(0, 0, W, H);
-
-    // Coordinate range
-    var xMin = -5.5, xMax = 5.5, yMin = -5.5, yMax = 5.5;
-
-    function toX(val) { return ((val - xMin) / (xMax - xMin)) * W; }
-    function toY(val) { return ((yMax - val) / (yMax - yMin)) * H; }
-
-    // All Pokemon dots
-    var trioIds = trio ? trio.map(function(p) { return p.id; }) : [];
-    var chosenId = chosenPokemon ? chosenPokemon.id : -1;
-
-    allPokemon.forEach(function(p) {
-      var cx = toX(p.coords[xAxis]);
-      var cy = toY(p.coords[yAxis]);
-      if (cx < -4 || cx > W + 4) return;
-      if (cy < -4 || cy > H + 4) return;
-
-      if (trioIds.indexOf(p.id) !== -1 || p.id === chosenId) return;
-
-      ctx.fillStyle = colors.dotColor(p.coords);
-      ctx.beginPath();
-      ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Trio members highlighted
-    if (trio) {
-      trio.forEach(function(p, i) {
-        var cx = toX(p.coords[xAxis]);
-        var cy = toY(p.coords[yAxis]);
-
-        var isChosen = p.id === chosenId;
-        var size = isChosen ? 5 : 3.5;
-        var alpha = isChosen ? 0.9 : 0.65;
-
-        var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 4);
-        var hue = isChosen ? 45 : (colors.AXIS_HUE[colors.AXIS_ORDER[
-          [0,1,2,3,4].sort(function(a,b){
-            return Math.abs(p.coords[b]) - Math.abs(p.coords[a]);
-          })[0]
-        ]] || 200);
-        glow.addColorStop(0, "hsla(" + hue + ", 60%, 60%, " + alpha + ")");
-        glow.addColorStop(1, "hsla(" + hue + ", 60%, 60%, 0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(cx, cy, size * 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "hsla(" + hue + ", 50%, 55%, " + alpha + ")";
-        ctx.beginPath();
-        ctx.arc(cx, cy, size, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (isChosen) {
-          ctx.strokeStyle = "hsla(45, 70%, 55%, 0.7)";
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(cx, cy, size + 5, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      });
+    // Hand off to explore module
+    if (Poke_Mystery.explore) {
+      Poke_Mystery.explore.init(canvas, allPokemon, userVector, trio, chosenPokemon, wrappedClose, exploreState);
     }
-
-    // User position marker
-    var ux = toX(userVector[xAxis]);
-    var uy = toY(userVector[yAxis]);
-
-    var userGlow = ctx.createRadialGradient(ux, uy, 0, ux, uy, 20);
-    userGlow.addColorStop(0, "rgba(255,200,60,0.45)");
-    userGlow.addColorStop(0.5, "rgba(255,180,40,0.12)");
-    userGlow.addColorStop(1, "rgba(255,160,30,0)");
-    ctx.fillStyle = userGlow;
-    ctx.beginPath();
-    ctx.arc(ux, uy, 20, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "rgba(255,210,80,0.9)";
-    ctx.beginPath();
-    ctx.arc(ux, uy, 4, 0, Math.PI * 2);
-    ctx.fill();
   }
 
   function capitalise(s) {
