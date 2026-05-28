@@ -22,9 +22,6 @@ Poke_Mystery.environment = (function() {
 
     ctx = canvas.getContext("2d");
     sizeCanvas();
-    // Start with a white canvas — multiply blend needs a light base
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
     window.addEventListener("resize", sizeCanvas);
 
     animId = requestAnimationFrame(tick);
@@ -41,19 +38,19 @@ Poke_Mystery.environment = (function() {
   function tick() {
     if (!ctx) return;
 
-    // Fill with white — multiply blend needs a light base to darken.
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(255,255,255,0.012)";
+    // Fade existing drops gradually each frame
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = "rgba(0,0,0,0.015)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw drops with multiply blending — overlapping drops compound like real ink.
-    ctx.globalCompositeOperation = "multiply";
+    // Draw drops normally over the faded canvas
+    ctx.globalCompositeOperation = "source-over";
 
     for (var i = drops.length - 1; i >= 0; i--) {
       var d = drops[i];
       d.age++;
+      var t = d.age / d.lifespan;
 
-      // Expand radius — fast initial spread, then slow
       d.radius = d.startRadius + (d.maxRadius - d.startRadius) * Math.min(1, t * 1.6);
       d.alpha = d.startAlpha * (1 - t);
 

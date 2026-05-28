@@ -40,10 +40,8 @@ Poke_Mystery.questions = [
   { id: "q03", primary: "reach", secondary: "tempo",
     text: "The path splits. One way climbs to a ridge overlooking the whole valley. The other stays low, following a stream through the trees.",
     options: [
-      { text: "Ridge. I want to see how far I can see.", weight: { reach: 2, tempo: 1.5, nature: 0, tether: 0, aura: 0 } },
-      { text: "Ridge. Race you to the top!", weight: { reach: 2, tempo: -1.5, nature: 0, tether: 0, aura: 0 } },
-      { text: "Stream. I'd rather be in it than above it.", weight: { reach: -2, tempo: 1.5, nature: 0, tether: 0, aura: 0 } },
-      { text: "Stream. The light's better down there right now.", weight: { reach: -2, tempo: -1.5, nature: 0, tether: 0, aura: 0 } }
+      { text: "Ridge.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: 0 } },
+      { text: "Stream.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   // -- Reach × Tether --
@@ -118,9 +116,9 @@ Poke_Mystery.questions = [
   { id: "q12", primary: "reach", secondary: "aura",
     text: "A stranger tells you they can read your future.",
     options: [
-      { text: "Sit down. Even if it's not real, something about being seen feels true.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Sit down.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
       { text: "Ask them how it works. Cold reading? Barnum statements? I want to understand the mechanism.", weight: { reach: 2, tempo: 0, nature: 0, tether: 0, aura: 1.5 } },
-      { text: "Politely decline. My future is just my life. I'll get there.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Politely decline.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: -1.5 } },
       { text: "Tell them my past instead and ask if that changes anything. Let's make this interesting.", weight: { reach: -2, tempo: 0, nature: 0, tether: 0, aura: 1.5 } }
     ] },
 
@@ -159,16 +157,16 @@ Poke_Mystery.questions = [
   { id: "q16", primary: "tempo", secondary: "nature",
     text: "Do you prefer to be busy or to have a lot of free time?",
     options: [
-      { text: "Busy. I need momentum.", weight: { reach: 0, tempo: -3, nature: 0.5, tether: 0, aura: 0 } },
-      { text: "Free time. I need space.", weight: { reach: 0, tempo: 3, nature: -0.5, tether: 0, aura: 0 } }
+      { text: "Busy.", weight: { reach: 0, tempo: -3, nature: 0.5, tether: 0, aura: 0 } },
+      { text: "Free time.", weight: { reach: 0, tempo: 3, nature: -0.5, tether: 0, aura: 0 } }
     ] },
 
   { id: "q17", primary: "tempo", secondary: "nature",
     text: "A sudden storm hits while you're out walking. No umbrella. You're already soaked.",
     options: [
-      { text: "Run. Not anywhere specific — it just feels good to move with it.", weight: { reach: 0, tempo: -2.5, nature: -1, tether: 0, aura: 0 } },
-      { text: "Open the radar app. I want to see where it's heading and exactly when it'll pass.", weight: { reach: 0, tempo: -2.5, nature: 1, tether: 0, aura: 0 } },
-      { text: "Keep walking. I'm already wet. It'll pass when it passes.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } }
+      { text: "Run.", weight: { reach: 0, tempo: -2.5, nature: -1, tether: 0, aura: 0 } },
+      { text: "Open the radar app.", weight: { reach: 0, tempo: -2.5, nature: 1, tether: 0, aura: 0 } },
+      { text: "Keep walking.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } }
     ] },
 
   { id: "q18", primary: "tempo", secondary: "nature",
@@ -192,8 +190,8 @@ Poke_Mystery.questions = [
   { id: "q20", primary: "tempo", secondary: "tether",
     text: "You win the lottery. What do you do with the money?",
     options: [
-      { text: "Spend it now. I've been waiting for this.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 1, aura: 0 } },
-      { text: "Save it. All of it. Compound interest is a kind of patience.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 1, aura: 0 } },
+      { text: "Spend it now.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 1, aura: 0 } },
+      { text: "Save it.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 1, aura: 0 } },
       { text: "Give most of it away. To family, friends, the person who always holds the door at the bakery.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: -1, aura: 0 } }
     ] },
 
@@ -226,9 +224,9 @@ Poke_Mystery.questions = [
   { id: "q24", primary: "tempo", secondary: "aura",
     text: "You find an old clock in a junk shop. It still works. Do you buy it?",
     options: [
-      { text: "Yes.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: -1.5 } },
+      { text: "Yes!", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: -1.5 } },
       { text: "Yes.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: 1.5 } },
-      { text: "No.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: 1.5 } },
+      { text: "Nope.", weight: { reach: 0, tempo: -2, nature: 0, tether: 0, aura: 1.5 } },
       { text: "No.", weight: { reach: 0, tempo: 2, nature: 0, tether: 0, aura: -1.5 } }
     ] },
 
@@ -267,8 +265,8 @@ Poke_Mystery.questions = [
   { id: "q28", primary: "nature", secondary: "tempo",
     text: "Would you rather fix something broken or replace it?",
     options: [
-      { text: "Fix it. Even if it takes longer.", weight: { reach: 0, tempo: 0.5, nature: -3, tether: 0, aura: 0 } },
-      { text: "Replace it. New is more efficient.", weight: { reach: 0, tempo: -0.5, nature: 3, tether: 0, aura: 0 } }
+      { text: "Fix it.", weight: { reach: 0, tempo: 0.5, nature: -3, tether: 0, aura: 0 } },
+      { text: "Replace it.", weight: { reach: 0, tempo: -0.5, nature: 3, tether: 0, aura: 0 } }
     ] },
 
   { id: "q29", primary: "nature", secondary: "tempo",
@@ -336,7 +334,7 @@ Poke_Mystery.questions = [
     options: [
       { text: "Standing at the waterline, feeling the sand pull away under my feet. Not thinking. Just there.", weight: { reach: 0, tempo: 0, nature: -2, tether: 0, aura: -1.5 } },
       { text: "Looking for interesting shells. Each one is a hundred thousand years old. The ocean is just showing off.", weight: { reach: 0, tempo: 0, nature: -2, tether: 0, aura: 1.5 } },
-      { text: "Taking photos for reference. I want to remember the exact colour temperature of this light.", weight: { reach: 0, tempo: 0, nature: 2, tether: 0, aura: -1.5 } },
+      { text: "Taking photos for reference.", weight: { reach: 0, tempo: 0, nature: 2, tether: 0, aura: -1.5 } },
       { text: "Building a sandcastle that's definitely going to be gone in an hour. That's the point.", weight: { reach: 0, tempo: 0, nature: 2, tether: 0, aura: 1.5 } }
     ] },
 
@@ -365,7 +363,7 @@ Poke_Mystery.questions = [
     text: "You walk into a room of people you don't know. What do you actually notice first?",
     options: [
       { text: "Who looks like they don't want to be here. I usually find that person and stand near them.", weight: { reach: -1.5, tempo: 0, nature: 0, tether: -2, aura: 0 } },
-      { text: "Who's already laughing. I want in on whatever's funny.", weight: { reach: -1.5, tempo: 0, nature: 0, tether: -2, aura: 0 } },
+      { text: "Who's already laughing.", weight: { reach: -1.5, tempo: 0, nature: 0, tether: -2, aura: 0 } },
       { text: "The layout. Where the door is, where the quiet corner is, how long I need to stay.", weight: { reach: 1.5, tempo: 0, nature: 0, tether: 2, aura: 0 } },
       { text: "Whether anyone else is also standing alone. Easier to be alone near someone else who's alone.", weight: { reach: 1.5, tempo: 0, nature: 0, tether: 2, aura: 0 } }
     ] },
@@ -401,7 +399,7 @@ Poke_Mystery.questions = [
   { id: "q43", primary: "tether", secondary: "nature",
     text: "There is a wallet on the ground. No one around.",
     options: [
-      { text: "Turn it in. Someone's day is ruined right now.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: -3, aura: 0 } },
+      { text: "Turn it in.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: -3, aura: 0 } },
       { text: "Leave it. Not my problem.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 3, aura: 0 } }
     ] },
 
@@ -442,7 +440,7 @@ Poke_Mystery.questions = [
   { id: "q48", primary: "tether", secondary: "aura",
     text: "A stranger in a café is crying quietly. You notice.",
     options: [
-      { text: "Go over. Ask if they're okay. Even if they say yes, stay for a minute.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2, aura: -1.5 } },
+      { text: "Go over. Ask if they're okay.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2, aura: -1.5 } },
       { text: "Send over a pastry with a note that says 'whatever it is, you get a free pastry.' Don't sign it.", weight: { reach: 0, tempo: 0, nature: 0, tether: -2, aura: 1.5 } },
       { text: "Nothing. They're not crying to be rescued. Giving space is its own kind of respect.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2, aura: -1.5 } },
       { text: "Notice, then spend twenty minutes inventing their life story. They've lived three different lives in my head.", weight: { reach: 0, tempo: 0, nature: 0, tether: 2, aura: 1.5 } }
@@ -499,7 +497,7 @@ Poke_Mystery.questions = [
     text: "You've just been handed the microphone at karaoke. It's not a song you chose.",
     options: [
       { text: "Sing it. Badly. Enthusiastically. The badness IS the performance.", weight: { reach: 0, tempo: -1.5, nature: 0, tether: 0, aura: 2 } },
-      { text: "Sing it earnestly. Even if it's a silly song, I'm going to mean every word.", weight: { reach: 0, tempo: 1.5, nature: 0, tether: 0, aura: 2 } },
+      { text: "Sing it earnestly.", weight: { reach: 0, tempo: 1.5, nature: 0, tether: 0, aura: 2 } },
       { text: "Hand the mic back. I don't sing in public. That's not shyness — it's a boundary.", weight: { reach: 0, tempo: 1.5, nature: 0, tether: 0, aura: -2 } },
       { text: "Leave. Karaoke is my nightmare. I'm already out the door.", weight: { reach: 0, tempo: -1.5, nature: 0, tether: 0, aura: -2 } }
     ] },
@@ -682,7 +680,7 @@ Poke_Mystery.questions = [
   { id: "q76", primary: "tempo", secondary: "aura",
     text: "A friend texts 'we need to talk.' Your reaction?",
     options: [
-      { text: "Call them immediately. What happened?", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 0, aura: -1 } },
+      { text: "Call them immediately.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 0, aura: -1 } },
       { text: "Wait. If it's urgent they'll call.", weight: { reach: 0, tempo: 2.5, nature: 0, tether: 0, aura: 0 } },
       { text: "Text back 'about what' with three question marks.", weight: { reach: 0, tempo: -2.5, nature: 0, tether: 0, aura: 1 } }
     ] },
@@ -721,8 +719,8 @@ Poke_Mystery.questions = [
   { id: "q81", primary: "tempo", secondary: "nature",
     text: "How do you feel about deadlines?",
     options: [
-      { text: "I need them. Otherwise nothing happens.", weight: { reach: 0, tempo: -3, nature: 0.5, tether: 0, aura: 0 } },
-      { text: "I work ahead. I don't like the pressure.", weight: { reach: 0, tempo: 3, nature: -0.5, tether: 0, aura: 0 } }
+      { text: "I need them.", weight: { reach: 0, tempo: -3, nature: 0.5, tether: 0, aura: 0 } },
+      { text: "I work ahead.", weight: { reach: 0, tempo: 3, nature: -0.5, tether: 0, aura: 0 } }
     ] },
 
   { id: "q82", primary: "tempo", secondary: "reach",
@@ -737,7 +735,7 @@ Poke_Mystery.questions = [
   { id: "q83", primary: "tempo", secondary: "aura",
     text: "Do you tap your foot or fidget?",
     options: [
-      { text: "Constantly. My body doesn't do stillness.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
+      { text: "Constantly.", weight: { reach: 0, tempo: -3, nature: 0, tether: 0, aura: 0.5 } },
       { text: "No.", weight: { reach: 0, tempo: 3, nature: 0, tether: 0, aura: -0.5 } }
     ] },
 
@@ -763,8 +761,8 @@ Poke_Mystery.questions = [
   { id: "q86", primary: "nature", secondary: "tempo",
     text: "Rain on a tin roof. What does it do to you?",
     options: [
-      { text: "Puts me to sleep. Best sound in the world.", weight: { reach: 0, tempo: 1, nature: -2.5, tether: 0, aura: 0 } },
-      { text: "Makes me restless. I want to be out in it.", weight: { reach: 0, tempo: -1, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "Puts me to sleep.", weight: { reach: 0, tempo: 1, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "Makes me restless.", weight: { reach: 0, tempo: -1, nature: -2.5, tether: 0, aura: 0 } },
       { text: "I prefer the sound of a fan. Consistent. Controllable.", weight: { reach: 0, tempo: 0, nature: 2.5, tether: 0, aura: 0 } }
     ] },
 
@@ -809,7 +807,7 @@ Poke_Mystery.questions = [
   { id: "q92", primary: "nature", secondary: "tempo",
     text: "How do you feel about camping?",
     options: [
-      { text: "Love it. Dirt, fire, stars — what else do you need?", weight: { reach: 0, tempo: -0.5, nature: -2.5, tether: 0, aura: 0 } },
+      { text: "Love it.", weight: { reach: 0, tempo: -0.5, nature: -2.5, tether: 0, aura: 0 } },
       { text: "It's fine for a weekend. Then I want a shower.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 0 } },
       { text: "No thanks. I like walls.", weight: { reach: 0, tempo: 0.5, nature: 2.5, tether: 0, aura: 0 } }
     ] },
@@ -817,8 +815,8 @@ Poke_Mystery.questions = [
   { id: "q93", primary: "nature", secondary: "reach",
     text: "Analog or digital?",
     options: [
-      { text: "Analog. Give me paper, a pen, a record player.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
-      { text: "Digital. Efficiency is beautiful.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
+      { text: "Analog.", weight: { reach: -0.5, tempo: 0, nature: -3, tether: 0, aura: 0 } },
+      { text: "Digital.", weight: { reach: 0.5, tempo: 0, nature: 3, tether: 0, aura: 0 } }
     ] },
 
   { id: "q94", primary: "nature", secondary: "aura",
@@ -833,7 +831,7 @@ Poke_Mystery.questions = [
   { id: "q95", primary: "nature", secondary: "tether",
     text: "Do you talk to animals?",
     options: [
-      { text: "All the time. They're better listeners than people.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
+      { text: "All the time.", weight: { reach: 0, tempo: 0, nature: -3, tether: -0.5, aura: 0 } },
       { text: "No.", weight: { reach: 0, tempo: 0, nature: 3, tether: 0.5, aura: 0 } }
     ] },
 
@@ -875,8 +873,8 @@ Poke_Mystery.questions = [
   { id: "q100", primary: "tether", secondary: "aura",
     text: "Would you rather give advice or receive it?",
     options: [
-      { text: "Give it. I like being useful.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: -0.5 } },
-      { text: "Receive it. I want to know what you think.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: 0.5 } }
+      { text: "Give it.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: -0.5 } },
+      { text: "Receive it.", weight: { reach: 0, tempo: 0, nature: 0, tether: -3, aura: 0.5 } }
     ] },
 
   { id: "q101", primary: "tether", secondary: "reach",
@@ -897,8 +895,8 @@ Poke_Mystery.questions = [
   { id: "q103", primary: "tether", secondary: "aura",
     text: "You overhear someone talking about you. Do you listen?",
     options: [
-      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2.5 } },
-      { text: "Yes.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2.5 } },
+      { text: "Yes. Obviously.", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: 2.5 } },
+      { text: "Yes...", weight: { reach: 0, tempo: 0, nature: 0, tether: 1, aura: -2.5 } },
       { text: "No.", weight: { reach: 0, tempo: 0, nature: 0, tether: -1, aura: -2.5 } }
     ] },
 
@@ -963,7 +961,7 @@ Poke_Mystery.questions = [
   { id: "q111", primary: "aura", secondary: "nature",
     text: "Are you superstitious?",
     options: [
-      { text: "A little. I still knock on wood.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: 0, aura: 2.5 } },
+      { text: "A little.", weight: { reach: 0, tempo: 0, nature: -0.5, tether: 0, aura: 2.5 } },
       { text: "No.", weight: { reach: 0, tempo: 0, nature: 0.5, tether: 0, aura: -2.5 } }
     ] },
 
@@ -1024,7 +1022,7 @@ Poke_Mystery.questions = [
   { id: "q119", primary: "aura", secondary: "nature",
     text: "A dog dressed in a tiny sweater. Your reaction?",
     options: [
-      { text: "Delighted. This is what the internet was made for.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
+      { text: "Delighted.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: 3 } },
       { text: "The dog looks humiliated. Free it.", weight: { reach: 0, tempo: 0, nature: 0, tether: 0, aura: -3 } }
     ] },
 

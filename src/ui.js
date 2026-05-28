@@ -195,8 +195,8 @@ Poke_Mystery.ui = (function() {
     return pool.slice(0, 3);
   }
 
-  function renderBall(ballType) {
-    var ball = el("div", "ball");
+  function renderBall(ballType, isShiny) {
+    var ball = el("div", "ball" + (isShiny ? " shiny" : ""));
     ball.style.setProperty("--ball-top", ballType.top);
     ball.style.setProperty("--ball-bottom", ballType.bottom);
     var top = el("div", "ball-top");
@@ -240,7 +240,7 @@ Poke_Mystery.ui = (function() {
 
         if (!isOpen) {
           // Closed state: ball sprite + genus + type hint
-          wrap.appendChild(renderBall(ballType));
+          wrap.appendChild(renderBall(ballType, isShinyCard));
           wrap.appendChild(el("div", "ball-genus", pokemon.genus || ""));
           wrap.appendChild(el("div", "ball-hint", typeHint));
 
@@ -255,7 +255,7 @@ Poke_Mystery.ui = (function() {
           art.alt = pokemon.name;
           art.loading = "lazy";
 
-          var nameEl = el("div", "ball-name", capitalise(pokemon.name));
+          var nameEl = el("div", "ball-name", capitalise(pokemon.name) + (isShinyCard ? ' <span class="ball-star">&#9733;</span>' : ""));
           var flavor = el("div", "ball-flavor", phrase);
           var prompt = el("div", "ball-prompt", "Click again to choose");
 
